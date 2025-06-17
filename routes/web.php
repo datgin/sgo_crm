@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Backend\AuthController;
+use App\Http\Controllers\Backend\BirthDayController;
 use App\Http\Controllers\Backend\DashboardController;
 use App\Http\Controllers\Backend\EmployeeController;
 use Illuminate\Support\Facades\Route;
@@ -22,6 +23,10 @@ Route::middleware('admin.auth')->group(function () {
 
     Route::group(['prefix' => 'employees', 'controller' => EmployeeController::class, 'as' => 'employees.'], function () {
         Route::get('/', 'index');
+    });
+
+    Route::group(['prefix' => 'birthdays', 'controller' => BirthDayController::class, 'as' => 'birthdays.'], function () {
+        Route::get('/', 'index')->name('index');
     });
 });
 
