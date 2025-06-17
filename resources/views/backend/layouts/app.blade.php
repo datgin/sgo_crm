@@ -49,9 +49,9 @@
         <!--End Back To Top Button-->
 
         <!--start switcher-->
-        <div class="switcher-body">
+        {{-- <div class="switcher-body">
             @include('backend.includes.switcher')
-        </div>
+        </div> --}}
         <!--end switcher-->
 
         <!--start overlay-->

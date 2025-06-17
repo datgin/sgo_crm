@@ -13,7 +13,7 @@ if (!function_exists('showImage')) {
             return $storage->url($image);
         }
 
-        return asset('images/image-default.png');
+        return asset('assets/backend/images/image-default.png');
     }
 }
 
