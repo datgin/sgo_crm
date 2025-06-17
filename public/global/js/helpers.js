@@ -80,3 +80,8 @@ function submitForm(formId, successCallback, url = null, errorCallback = null) {
         });
     });
 }
+
+function formatDate(dateString, format = "DD-MM-YYYY") {
+    if (!dateString) return "<span class='text-muted'>NA</span>";
+    return dayjs(dateString).format(format);
+}
