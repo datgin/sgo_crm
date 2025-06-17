@@ -8,7 +8,12 @@
     <script>
         $(function() {
             const api = "/employees"
-            dataTables(api)
+            dataTables(api, {
+                fixedColumns: {
+                    left: 6,
+                    right: 1
+                },
+            })
         })
     </script>
 @endpush

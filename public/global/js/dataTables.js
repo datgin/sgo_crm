@@ -1,5 +1,3 @@
-console.log(columns);
-
 const dataTables = (
     api,
     {
@@ -8,16 +6,20 @@ const dataTables = (
         hasCheckbox = true,
         hasDateRange = false,
         hasDtControl = false,
+        fixedColumns = null,
+        scrollX = true,
         onInitComplete = null,
         onDrawCallback = null,
+        tableId = "#myTable",
     } = {}
 ) => {
-    const $table = $("#myTable");
+    const $table = $(tableId);
     $table.empty(); // clear old headers if re-render
 
     // Generate <thead>
     let thead = "<thead><tr>";
     if (hasDtControl) thead += "<th></th>";
+
     if (hasCheckbox)
         thead +=
             '<th><input type="checkbox" id="selectAll" class="form-check-input" /></th>';
@@ -67,8 +69,10 @@ const dataTables = (
         });
     }
 
-    // Init DataTable
-    const table = $table.DataTable({
+    console.log(finalColumns);
+
+    // DataTable options
+    const options = {
         processing: true,
         serverSide: true,
         ajax: {
@@ -111,12 +115,39 @@ const dataTables = (
                 },
             },
         },
-    });
+        language: {
+            lengthMenu: "Hiển thị _MENU_ bản ghi mỗi trang",
+            zeroRecords: "Không tìm thấy kết quả phù hợp",
+            info: "Hiển thị _START_ đến _END_ trong tổng số _TOTAL_ bản ghi",
+            infoEmpty: "Không có bản ghi nào",
+            infoFiltered: "(lọc từ tổng số _MAX_ bản ghi)",
+            search: "Tìm kiếm:",
+            paginate: {
+                first: "Đầu",
+                last: "Cuối",
+                next: "Sau",
+                previous: "Trước",
+            },
+        },
+    };
 
-    const $target = $(".dt-layout-cell.dt-layout-start .dt-length");
+    if (scrollX) {
+        options.scrollX = true;
+        options.scrollCollapse = true;
+    }
 
-    // Date range picker setup
+    if (fixedColumns) {
+        options.fixedColumns = {
+            leftColumns: fixedColumns.left || 0,
+            rightColumns: fixedColumns.right || 0,
+        };
+    }
+
+    const table = $table.DataTable(options);
+
+    // Date range filter
     if (hasDateRange) {
+        const $target = $(".dt-layout-cell.dt-layout-start .dt-length");
         const datePickerHtml = `
             <div class="d-flex align-items-center mb-2 ms-2">
                 <input type="text" id="dateRangePicker" name="date_range" class="form-control form-control-sm" placeholder="Chọn khoảng ngày" />
@@ -150,10 +181,10 @@ const dataTables = (
         );
     }
 
-    // Auto reload on filter change
+    // Reload on filter change
     Object.keys(filters).forEach((key) => {
         $(`#filter-${key}`).on("change", () => table.ajax.reload());
     });
 
-    return table; // return instance for later use
+    return table;
 };
