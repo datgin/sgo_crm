@@ -27,6 +27,8 @@
                         $child['active'] = false;
                     }
                 }
+
+                unset($child);
             }
             $isActive = $hasActiveChild || ltrim($item['url'], '/') === $currentUrl;
         @endphp
@@ -44,7 +46,6 @@
                     @foreach ($item['children'] as $child)
                         <li class="{{ $child['active'] ? 'active' : '' }}">
                             <a href="{{ $child['url'] }}">
-                                <i class="{{ $child['icon'] }}"></i>
                                 {{ $child['title'] }}
                             </a>
                         </li>

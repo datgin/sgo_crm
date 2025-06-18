@@ -26,7 +26,7 @@ if (!function_exists('transaction')) {
                 'trace' => $e->getTraceAsString(),
             ]);
 
-            return errorResponse('Có lỗi xảy ra, vui lòng thử lại sau!', true);
+            return errorResponse('Có lỗi xảy ra, vui lòng thử lại sau!');
         }
     }
 }

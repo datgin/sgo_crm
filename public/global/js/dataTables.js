@@ -69,8 +69,6 @@ const dataTables = (
         });
     }
 
-    console.log(finalColumns);
-
     // DataTable options
     const options = {
         processing: true,

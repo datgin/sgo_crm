@@ -6,6 +6,9 @@
 <link href="{{ asset('assets/backend/plugins/perfect-scrollbar/css/perfect-scrollbar.css') }}" rel="stylesheet" />
 <link href="{{ asset('assets/backend/plugins/metismenu/css/metisMenu.min.css') }}" rel="stylesheet" />
 
+<link rel="stylesheet" href="{{ asset('assets/backend/css/choices.min.css') }}" />
+<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+
 <!-- CSS Files -->
 <link href="{{ asset('assets/backend/css/bootstrap.min.css') }}" rel="stylesheet" />
 <link href="{{ asset('assets/backend/css/bootstrap-extended.css') }}" rel="stylesheet" />
