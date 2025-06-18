@@ -45,7 +45,7 @@
             <table id="myTable" class="display" style="width:100%">
                 <thead>
                     <tr>
-                        {{-- <th>STT</th> --}}
+                        <th>STT</th>
                         <th>Mã NV</th>
                         <th>Tên nhân viên</th>
                         <th>Vị trí</th>
@@ -78,6 +78,7 @@
             let table = $('#myTable').DataTable({
                 processing: true,
                 serverSide: false,
+                order: [],
                 ajax: {
                     url: '{{ route('birthdays.index') }}',
                     type: 'GET',
@@ -95,6 +96,13 @@
                     }
                 },
                 columns: [{
+                        data: 'stt',
+                        title: 'STT',
+                        orderable: false,
+                        searchable: false,
+                        width: '2%'
+                    },
+                    {
                         data: 'code',
                         name: 'code',
                         width: '8%'
@@ -107,12 +115,12 @@
                     {
                         data: 'position',
                         name: 'position',
-                        width: '12%'
+                        width: '11%'
                     },
                     {
                         data: 'department',
                         name: 'department',
-                        width: '12%'
+                        width: '11%'
                     },
                     {
                         data: 'gender',
@@ -134,7 +142,24 @@
                         name: 'days_left',
                         width: '6%'
                     },
-                ]
+                ],
+                language: {
+                    processing: "Đang xử lý...",
+                    lengthMenu: "Hiển thị _MENU_ dòng mỗi trang",
+                    zeroRecords: "Không tìm thấy dữ liệu phù hợp",
+                    info: "Hiển thị _START_ đến _END_ của _TOTAL_ dòng",
+                    infoEmpty: "Hiển thị 0 đến 0 của 0 dòng",
+                    infoFiltered: "(lọc từ _MAX_ dòng)",
+                    search: "Tìm kiếm:",
+                    paginate: {
+                        first: "Đầu",
+                        last: "Cuối",
+                        next: "Tiếp",
+                        previous: "Trước"
+                    },
+                    emptyTable: "Không có dữ liệu trong bảng",
+                    loadingRecords: "Đang tải...",
+                }
             });
 
 

@@ -13,8 +13,17 @@
         "children": [
             {
                 "title": "Quản lý nhân sự",
-                "icon": "ellipse-outline",
                 "url": "/employees",
+                "active": false
+            },
+            {
+                "title": "Sinh nhật",
+                "url": "/birthdays",
+                "active": false
+            },
+            {
+                "title": "Thông tin nhân sự",
+                "url": "/employees/information",
                 "active": false
             }
         ]
