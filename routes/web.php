@@ -5,7 +5,6 @@ use App\Http\Controllers\Backend\BirthDayController;
 use App\Http\Controllers\Backend\ContractTypeController;
 use App\Http\Controllers\Backend\DashboardController;
 use App\Http\Controllers\Backend\EmployeeController;
-use App\Http\Controllers\PdfController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -43,8 +42,6 @@ Route::middleware('admin.auth')->group(function () {
         Route::delete('/{id}', 'destroy')->name('destroy');
     });
 
-    Route::get('/pdf-form', [PdfController::class, 'form'])->name('pdf.form');
-    Route::post('/pdf-extract', [PdfController::class, 'extract'])->name('pdf.extract');
 });
 
 Route::middleware('admin.guest')->group(function () {
