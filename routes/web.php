@@ -2,8 +2,10 @@
 
 use App\Http\Controllers\Backend\AuthController;
 use App\Http\Controllers\Backend\BirthDayController;
+use App\Http\Controllers\Backend\ContractTypeController;
 use App\Http\Controllers\Backend\DashboardController;
 use App\Http\Controllers\Backend\EmployeeController;
+use App\Http\Controllers\PdfController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -33,6 +35,16 @@ Route::middleware('admin.auth')->group(function () {
     Route::group(['prefix' => 'birthdays', 'controller' => BirthDayController::class, 'as' => 'birthdays.'], function () {
         Route::get('/', 'index')->name('index');
     });
+
+    Route::group(['prefix' => 'contactTypes', 'controller' => ContractTypeController::class, 'as' => 'contactTypes.'], function () {
+        Route::get('/', 'index')->name('index');
+        Route::get('/{id}/edit', 'edit')->name('edit');
+        Route::put('/{id}', 'update')->name('update');
+        Route::delete('/{id}', 'destroy')->name('destroy');
+    });
+
+    Route::get('/pdf-form', [PdfController::class, 'form'])->name('pdf.form');
+    Route::post('/pdf-extract', [PdfController::class, 'extract'])->name('pdf.extract');
 });
 
 Route::middleware('admin.guest')->group(function () {
