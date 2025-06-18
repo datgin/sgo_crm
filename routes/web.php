@@ -23,6 +23,8 @@ Route::middleware('admin.auth')->group(function () {
 
     Route::group(['prefix' => 'employees', 'controller' => EmployeeController::class, 'as' => 'employees.'], function () {
         Route::get('/', 'index');
+        Route::get('/view/{id}', 'view')->name('view');
+        Route::get('/information', 'information')->name('information');
     });
 
     Route::group(['prefix' => 'birthdays', 'controller' => BirthDayController::class, 'as' => 'birthdays.'], function () {

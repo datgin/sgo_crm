@@ -17,8 +17,6 @@ class BirthDayController extends Controller
         $today = Carbon::today();
         $month = $request->get('month', $today->month);
 
-        Log::info($month);
-        Log::info($month);
         $employees = Employee::with(['position', 'department'])
             ->select('id', 'code', 'full_name', 'position_id', 'department_id', 'gender', 'birthday')
             ->whereMonth('birthday', $month)
@@ -35,7 +33,7 @@ class BirthDayController extends Controller
         })->count();
 
 
-        $mapped = $employees->map(function ($emp) use ($today, $month) {
+        $mapped = $employees->map(function ($emp, $index) use ($today, $month) {
             $birthDate = Carbon::parse($emp->birthday);
 
             $todayInSelectedMonth = Carbon::create($today->year, $month, $today->day);
@@ -52,6 +50,7 @@ class BirthDayController extends Controller
             }
 
             return [
+                'stt' => $index + 1,
                 'code' => $emp->code,
                 'full_name' => $emp->full_name,
                 'position' => $emp->position->name ?? '',
@@ -67,10 +66,6 @@ class BirthDayController extends Controller
                 'days_left' => $daysLeft,
             ];
         });
-
-
-
-
 
 
         if ($request->ajax()) {

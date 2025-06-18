@@ -95,12 +95,17 @@ class Employee extends Model
 
     public function getSeniorityAttribute(): string
     {
-        if (!$this->university_start_date) {
+
+        $contract = $this->contract;
+        if (!$contract || !$contract->start_date) {
             return 'Chưa xác định';
         }
 
-        $start = Carbon::parse($this->university_start_date);
-        $end = $this->resignation_date ? Carbon::parse($this->resignation_date) : now();
+        $start = Carbon::parse($contract->start_date);
+        $end = $contract->end_date
+            ? Carbon::parse($contract->end_date)
+            : now();
+
         $years = $start->diffInYears($end);
 
         return match (true) {
@@ -113,5 +118,46 @@ class Employee extends Model
     public function getAvatarAttribute($avatar): string
     {
         return showImage($avatar);
+    }
+
+    public function getGenderTextAttribute()
+    {
+        return match ($this->gender) {
+            'male' => 'Nam',
+            'female' => 'Nữ',
+            default => 'Khác',
+        };
+    }
+
+    public function getSeniorityDetailAttribute(): string
+    {
+        $contract = $this->contract;
+        if (!$contract || !$contract->start_date) {
+            return 'Chưa xác định';
+        }
+
+        $start = Carbon::parse($contract->start_date);
+        $end   = $contract->end_date
+            ? Carbon::parse($contract->end_date)
+            : now();
+
+        $diff = $start->diff($end);
+
+        $years  = $diff->y;
+        $months = $diff->m;
+
+        $parts = [];
+        if ($years > 0) {
+            $parts[] = "{$years} năm";
+        }
+        if ($months > 0) {
+            $parts[] = "{$months} tháng";
+        }
+
+        if (empty($parts)) {
+            $parts[] = '< 1 tháng';
+        }
+
+        return implode(' ', $parts);
     }
 }
