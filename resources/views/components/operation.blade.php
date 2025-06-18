@@ -1,7 +1,7 @@
 @props(['row' => $row, 'view' => false, 'edit' => true, 'delete' => true])
 
 @if ($edit)
-    <a class="btn btn-sm btn-warning" href="#">
+    <a class="btn btn-sm btn-warning btn-edit"  data-id="{{ $row->id }}" href="#">
         <i class="fas fa-edit"></i>
     </a>
 @endif
