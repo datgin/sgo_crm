@@ -6,8 +6,7 @@
         $module = request()->segment(1);
     @endphp
 
-    <a class="btn btn-sm btn-warning" href="/{{ $module }}/save/{{ $row->id }}">
-
+    <a class="btn btn-sm btn-warning btn-edit" data-id="{{ $row->id }}" href="/{{ $module }}/save/{{ $row->id }}">
         <i class="fas fa-edit"></i>
     </a>
 @endif

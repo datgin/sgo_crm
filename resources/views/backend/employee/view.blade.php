@@ -37,13 +37,12 @@
                     <div class="col-md-4">
                         <div class="text-center">
                             <div class="photo-frame mb-3" id="employeeAvatar">
-                                <img src="{{ asset($employee->avatar) }}" alt="Ảnh nhân viên" class="img-fluid">
+                                <img src="{{ $employee->avatar }}" alt="Ảnh nhân viên" class="img-fluid">
                             </div>
                             <h5 class="fw-bold mb-1" id="employeeFullName">{{ $employee->full_name }}</h5>
                             <p class="text-muted  mb-1">Giới tính: <span
                                     id="employeeGender">{{ $employee->gender_text }}</span></p>
-                            <p class=" mb-1">Tuổi: <span
-                                    id="employeeAge">{{ \Carbon\Carbon::parse($employee->birthday)->age }} tuổi</span></p>
+                            <p class=" mb-1">Tuổi: <span id="employeeAge">{{ $employee->birthday->age }} tuổi</span></p>
                             <p class=" mb-1">Bộ phận: <span
                                     id="employeeDepartment">{{ $employee->department->name }}</span></p>
                             <p class=" mb-0">Chức vụ: <span id="employeePosition">{{ $employee->position->name }}</span>
@@ -59,7 +58,7 @@
                                     <tr>
                                         <td class="label-col">Ngày sinh:</td>
                                         <td id="employeeBirthday">
-                                            {{ \Carbon\Carbon::parse($employee->birthday)->format('d/m/Y') }}</td>
+                                            {{ $employee->birthday->format('d/m/Y') }}</td>
                                     </tr>
                                     <tr>
                                         <td class="label-col">SĐT:</td>
@@ -88,13 +87,13 @@
                                     <tr>
                                         <td class="label-col">Thời gian vào làm:</td>
                                         <td id="employeeStartDate">
-                                            {{ \Carbon\Carbon::parse($employee->contract->start_date)->format('d/m/Y') }}
+                                            {{-- {{ $employee->contract && $employee->contract->start_date ? $employee->contract->start_date->format('d/m/Y') : '' }} --}}
                                         </td>
                                     </tr>
                                     <tr>
                                         <td class="label-col">Thời gian kết thúc hợp đồng:</td>
                                         <td id="employeeEndDate" class="text-danger">
-                                            {{ \Carbon\Carbon::parse($employee->contract->end_date)->format('d/m/Y') }}
+                                            {{-- {{ $employee->contract && $employee->contract->end_date ? $employee->contract->end_date->format('d/m/Y') : '' }} --}}
                                         </td>
                                     </tr>
                                     <tr>
@@ -104,7 +103,8 @@
                                     <tr>
                                         <td class="label-col">Loại HĐ:</td>
                                         <td id="employeeContractType" class="text-warning">
-                                            {{ $employee->contract->contractType->name }}</td>
+                                            {{ $employee->contract && $employee->contract->contractType ? $employee->contract->contractType->name : '' }}
+                                        </td>
                                     </tr>
                                     <tr>
                                         <td class="label-col">Trạng thái:</td>
@@ -116,7 +116,7 @@
                                     <tr>
                                         <td class="label-col">Ngày nghỉ việc:</td>
                                         <td id="employeeResignationDate">
-                                            {{ $employee->resignation_date ? \Carbon\Carbon::parse($employee->resignation_date)->format('d/m/Y') : '' }}
+                                            {{-- {{ $employee->resignation_date ? $employee->resignation_date->format('d/m/Y') : '' }} --}}
                                         </td>
                                     </tr>
                                     <tr>
