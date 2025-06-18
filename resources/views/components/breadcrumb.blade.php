@@ -1,18 +1,18 @@
-                <!--start breadcrumb-->
-                <div class="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
-                    <div class="breadcrumb-title"><a href="#">Dashboard</a></div>
-                    <nav aria-label="breadcrumb">
-                        <ol class="breadcrumb mb-0 p-0 align-items-center">
-                            <li class="breadcrumb-item">
-                                <a href="javascript::void(0)">
-                                </a>
-                            </li>
-                            <li class="breadcrumb-item active" aria-current="page">
-                                eCommerce
-                            </li>
-                        </ol>
-                    </nav>
-                    {{-- <div class="ms-auto">
+<!--start breadcrumb-->
+<div class="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
+    <div class="breadcrumb-title"><a href="#">Dashboard</a></div>
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb mb-0 p-0 align-items-center">
+            <li class="breadcrumb-item">
+                <a href="javascript::void(0)">
+                </a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">
+                eCommerce
+            </li>
+        </ol>
+    </nav>
+    {{-- <div class="ms-auto">
                         <div class="btn-group">
                             <button type="button" class="btn btn-outline-primary">
                                 Settings
@@ -31,5 +31,5 @@
                             </div>
                         </div>
                     </div> --}}
-                </div>
-                <!--end breadcrumb-->
+</div>
+<!--end breadcrumb-->

@@ -6,6 +6,10 @@
 <script src="{{ asset('assets/backend/plugins/metismenu/js/metisMenu.min.js') }}"></script>
 <script src="{{ asset('assets/backend/js/bootstrap.bundle.min.js') }}"></script>
 
+<script src="{{ asset('assets/backend/js/choices.min.js') }}"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+
 <!-- Ionicons -->
 <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
 <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>

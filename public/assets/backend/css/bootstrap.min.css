@@ -1808,7 +1808,7 @@ progress {
 	}
 }
 .form-label {
-	margin-bottom: .5rem
+	margin-bottom: .3rem
 }
 .col-form-label {
 	padding-top: calc(.375rem + var(--bs-border-width));
@@ -1836,7 +1836,7 @@ progress {
 	display: block;
 	width: 100%;
 	padding: .375rem .75rem;
-	font-size: 1rem;
+	font-size: .9rem;
 	font-weight: 400;
 	line-height: 1.5;
 	color: var(--bs-body-color);
@@ -3965,7 +3965,8 @@ textarea.form-control-lg {
 	color: var(--bs-card-color)
 }
 .card-title {
-	margin-bottom: var(--bs-card-title-spacer-y);
+	margin-bottom: 0;
+	/* margin-bottom: var(--bs-card-title-spacer-y); */
 	color: var(--bs-card-title-color)
 }
 .card-subtitle {

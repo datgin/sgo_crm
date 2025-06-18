@@ -60,7 +60,9 @@
     </div>
     <!--end wrapper-->
 
-    <div class="overlay" id="overlay"></div>
+    <div id="loadingOverlay">
+        <div id="loading"></div>
+    </div>
 
     @include('backend.includes.script')
 
