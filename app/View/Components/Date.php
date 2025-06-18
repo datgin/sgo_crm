@@ -11,9 +11,16 @@ class Date extends Component
     /**
      * Create a new component instance.
      */
-    public function __construct()
-    {
-        //
+    public function __construct(
+        public string $name,
+        public bool $required = false,
+        public ?string $label = null,
+        public ?string $value = '',
+        public ?string $placeholder = null,
+        public bool $single = true, // true = chọn 1 ngày, false = khoảng
+        public ?string $id = "",
+    ) {
+        $this->id = $id ?: $name;
     }
 
     /**

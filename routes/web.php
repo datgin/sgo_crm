@@ -25,6 +25,9 @@ Route::middleware('admin.auth')->group(function () {
 
     Route::group(['prefix' => 'employees', 'controller' => EmployeeController::class, 'as' => 'employees.'], function () {
         Route::get('/', 'index');
+        Route::get('save/{id?}', 'save');
+        Route::post('save', 'store');
+        Route::put('save/{id}', 'update');
         Route::get('/view/{id}', 'view')->name('view');
         Route::get('/information', 'information')->name('information');
     });

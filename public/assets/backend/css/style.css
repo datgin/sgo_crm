@@ -1441,6 +1441,45 @@ ul.categories-list li {
     }
 }
 
+.error-message {
+    display: none;
+    margin-top: 5px;
+    font-weight: 500;
+}
+.upload-wrapper {
+    display: inline-block;
+    position: relative;
+}
+
+.upload-wrapper .preview-image {
+    width: 150px;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 4px;
+    border: 2px dashed #c3c3c3;
+    transition: border-color 0.3s, box-shadow 0.3s;
+    background-color: #f8f9fa;
+}
+
+.upload-wrapper .preview-image:hover {
+    border-color: #0d6efd;
+    box-shadow: 0 0 10px rgba(13, 110, 253, 0.2);
+}
+
+.upload-wrapper:hover::after {
+    content: "Chọn ảnh";
+    position: absolute;
+    bottom: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.6);
+    color: #fff;
+    font-size: 12px;
+    padding: 3px 8px;
+    border-radius: 4px;
+    pointer-events: none;
+}
+
 .table-loading-overlay {
     position: absolute;
     top: 0;

@@ -3,10 +3,13 @@
 namespace App\Http\Controllers\Backend;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\EmployeeRequest;
 use App\Http\Resources\Employee\EmployeeCollection;
 use App\Models\Department;
 use App\Models\EducationLevel;
 use App\Models\Employee;
+use App\Models\EmploymentStatus;
+use App\Models\Position;
 use App\Traits\DataTables;
 use App\Traits\QueryBuilder;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -30,20 +33,20 @@ class EmployeeController extends Controller
 
             return $this->processDataTable(
                 $query,
-                fn ($dataTable) =>
+                fn($dataTable) =>
                 $dataTable
-                    ->addColumn('position', fn ($row) => $row->position ? $row->position->name : 'NA')
-                    ->addColumn('education_level', fn ($row) => $row->educationLevel ? $row->educationLevel->name : 'NA')
-                    ->addColumn('contract_code', fn ($row) => $row->contract ? $row->contract->code : "Không xác định")
-                    ->addColumn('contract_type', fn ($row) => $row->contract ? $row->contract->contractType->name : "Không xác định")
-                    ->addColumn('contract_link', fn ($row) => $row->contract ? "<a href=''>Hợp đồng lao động</a>" : "Không xác định")
-                    ->addColumn('employment_status', fn ($row) => $row->employmentStatus ? $row->employmentStatus->name : 'NA')
-                    ->addColumn('age', fn ($row) => $row->age ?? 'NA')
-                    ->addColumn('days_left_for_university', fn ($row) => $row->days_left_for_university ?? '<span class="text-muted">Chưa có</span>')
-                    ->addColumn('full_name_code', fn ($row) => $row->nameCode)
-                    ->addColumn('seniority', fn ($row) => $row->seniority)
-                    ->editColumn('created_at', fn ($row) => $row->created_at->format('d-m-Y'))
-                    ->editColumn('operations', fn ($row) => view('components.operation', ['row' => $row])->render()),
+                    ->addColumn('position', fn($row) => $row->position ? $row->position->name : 'NA')
+                    ->addColumn('education_level', fn($row) => $row->educationLevel ? $row->educationLevel->name : 'NA')
+                    ->addColumn('contract_code', fn($row) => $row->contract ? $row->contract->code : "Không xác định")
+                    ->addColumn('contract_type', fn($row) => $row->contract ? $row->contract->contractType->name : "Không xác định")
+                    ->addColumn('contract_link', fn($row) => $row->contract ? "<a href=''>Hợp đồng lao động</a>" : "Không xác định")
+                    ->addColumn('employment_status', fn($row) => $row->employmentStatus ? $row->employmentStatus->name : 'NA')
+                    ->addColumn('age', fn($row) => $row->age ?? 'NA')
+                    ->addColumn('days_left_for_university', fn($row) => $row->days_left_for_university ?? '<span class="text-muted">Chưa có</span>')
+                    ->addColumn('full_name_code', fn($row) => $row->nameCode)
+                    ->addColumn('seniority', fn($row) => $row->seniority)
+                    ->editColumn('created_at', fn($row) => $row->created_at->format('d-m-Y'))
+                    ->editColumn('operations', fn($row) => view('components.operation', ['row' => $row])->render()),
                 ['days_left_for_university', 'contract_link']
 
             );
@@ -69,19 +72,19 @@ class EmployeeController extends Controller
 
             if ($request->ajax()) {
                 return response()->json([
-                    'avatar'             => asset($employee->avatar),
+                    'avatar'             => $employee->avatar,
                     'full_name'          => $employee->full_name,
                     'gender_text'        => $employee->gender_text,
-                    'age'                => \Carbon\Carbon::parse($employee->birthday)->age . ' tuổi',
+                    'age'                => $employee->birthday->age . ' tuổi',
                     'department'         => $employee->department->name,
                     'position'           => $employee->position->name,
-                    'birthday'           => \Carbon\Carbon::parse($employee->birthday)->format('d/m/Y'),
+                    'birthday'           => $employee->birthday->format('d/m/Y'),
                     'phone'              => $employee->phone,
                     'cccd'               => $employee->cccd,
                     'code'               => $employee->code,
                     'address'            => $employee->address,
-                    'start_date'         => \Carbon\Carbon::parse($employee->contract->start_date)->format('d/m/Y'),
-                    'end_date'           => \Carbon\Carbon::parse($employee->contract->end_date)->format('d/m/Y'),
+                    'start_date'         => $employee->contract->start_date->format('d/m/Y'),
+                    'end_date'           => $employee->contract->end_date->format('d/m/Y'),
                     'seniority_detail'   => $employee->seniority_detail,
                     'contract_type'      => $employee->contract->contractType->name,
                     'employment_status'  => $employee->employmentStatus->name,
@@ -100,7 +103,6 @@ class EmployeeController extends Controller
 
     public function information(Request $request)
     {
-        Log::info($request->all());
         $departments = Department::all();
 
         $employees = Employee::with(['position', 'department', 'employmentStatus']);
@@ -125,5 +127,70 @@ class EmployeeController extends Controller
         }
 
         return view('backend.employee.information', compact('departments', 'employees', 'activeEmployeeCount'));
+    }
+
+    public function save(?string $id = null)
+    {
+
+        $title          = "Tạo mới nhân viên";
+        $employee       = null;
+
+        $positions = Position::query()->pluck('name', 'id')->toArray();
+        $departments = Department::query()->pluck('name', 'id')->toArray();
+        $educationLevels = EducationLevel::query()->pluck('name', 'id')->toArray();
+        $employeeStatuses = EmploymentStatus::query()->pluck('name', 'id')->toArray();
+
+        if (!empty($id)) {
+            $employee   = Employee::query()->findOrFail($id);
+            $title      = "Chỉnh sửa nhân viên - {$employee->full_name}";
+        }
+
+        return view('backend.employee.save', compact('title', 'employee', 'positions', 'departments', 'educationLevels', 'employeeStatuses'));
+    }
+
+    public function store(EmployeeRequest $request)
+    {
+        $uploadAvatar = null;
+        return transaction(function () use ($request, &$uploadAvatar) {
+            $credentials = $request->validated();
+
+            $credentials['code'] ??= generateUniqueCode('employees');
+
+            if ($request->hasFile('avatar')) {
+                $uploadAvatar = uploadImages('avatar', 'employee');
+                $credentials['avatar'] = $uploadAvatar;
+            }
+
+            Employee::query()->create($credentials);
+
+            return successResponse("Tạo nhân viên thành công", ['redirect' => '/employees']);
+        }, function () use ($uploadAvatar) {
+            deleteImage($uploadAvatar);
+        });
+    }
+
+    public function update(EmployeeRequest $request, $id)
+    {
+        $uploadAvatar = null;
+        $employee = Employee::query()->findOrFail($id);
+        $oldAvatar = $employee->avatar;
+
+        return transaction(function () use ($request, &$uploadAvatar, $id, $oldAvatar, $employee) {
+            $credentials = $request->validated();
+
+            $credentials['code'] ??= generateUniqueCode('employees');
+
+            if ($request->hasFile('avatar')) {
+                $uploadAvatar = uploadImages('avatar', 'employee');
+                $credentials['avatar'] = $uploadAvatar;
+            }
+            $employee->update($credentials);
+
+            if (!empty($uploadAvatar)) deleteImage($oldAvatar);
+
+            return successResponse("Lưu thay đổi thành công", ['redirect' => '/employees']);
+        }, function () use ($uploadAvatar) {
+            deleteImage($uploadAvatar);
+        });
     }
 }

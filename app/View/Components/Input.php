@@ -16,7 +16,7 @@ class Input extends Component
         public $name            = null,
         public $type            = 'text',
         public $class           = '',
-        public $placeholder     = '',
+        public $placeholder     = null,
         public $value           = '',
         public $message         = '',
         public $disabled        = false,
@@ -25,7 +25,7 @@ class Input extends Component
         public $label           = "",
         public $required      = false
     ) {
-        //
+        $this->id = $id ?: $name;
     }
 
     /**
