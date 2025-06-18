@@ -87,13 +87,13 @@
                                     <tr>
                                         <td class="label-col">Thời gian vào làm:</td>
                                         <td id="employeeStartDate">
-                                            {{ $employee->contract && $employee->contract->start_date ? $employee->contract->start_date->format('d/m/Y') : '' }}
+                                            {{-- {{ $employee->contract && $employee->contract->start_date ? $employee->contract->start_date->format('d/m/Y') : '' }} --}}
                                         </td>
                                     </tr>
                                     <tr>
                                         <td class="label-col">Thời gian kết thúc hợp đồng:</td>
                                         <td id="employeeEndDate" class="text-danger">
-                                            {{ $employee->contract && $employee->contract->end_date ? $employee->contract->end_date->format('d/m/Y') : '' }}
+                                            {{-- {{ $employee->contract && $employee->contract->end_date ? $employee->contract->end_date->format('d/m/Y') : '' }} --}}
                                         </td>
                                     </tr>
                                     <tr>
@@ -116,7 +116,7 @@
                                     <tr>
                                         <td class="label-col">Ngày nghỉ việc:</td>
                                         <td id="employeeResignationDate">
-                                            {{ $employee->resignation_date ? $employee->resignation_date->format('d/m/Y') : '' }}
+                                            {{-- {{ $employee->resignation_date ? $employee->resignation_date->format('d/m/Y') : '' }} --}}
                                         </td>
                                     </tr>
                                     <tr>
