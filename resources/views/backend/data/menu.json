@@ -27,5 +27,19 @@
                 "active": false
             }
         ]
+    },
+    {
+        "title": "Cấu hình",
+        "icon": "fas fa-cog",
+        "url": "javascript:void(0)",
+        "active": false,
+        "children": [
+            {
+                "title": "Loại hợp đồng",
+                "url": "/contactTypes",
+                "active": false
+            }
+
+        ]
     }
 ]

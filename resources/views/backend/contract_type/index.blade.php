@@ -1,6 +1,13 @@
 @extends('backend.layouts.app')
 
 @section('content')
+    <x-breadcrumb />
+
+    <x-page-header title="Loại hợp đồng">
+        <a href="/contactTypes/create" class="btn btn-primary">
+            <i class="fas fa-plus me-1"></i> Thêm loại hợp đồng
+        </a>
+    </x-page-header>
     <div class="card-body">
         <div class="table-responsive">
             <table id="myTable" class="display" style="width:100%">
@@ -19,7 +26,7 @@
 @push('scripts')
     <script src="{{ asset('assets/backend/js/datatables.min.js') }}"></script>
     <script src="{{ asset('global/js/dataTables.js') }}"></script>
-
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         $(document).ready(function() {
             let table = $('#myTable').DataTable({
@@ -96,6 +103,49 @@
                 e.preventDefault();
                 let id = $(this).data('id');
                 window.location.href = `/contactTypes/${id}/edit`; // hoặc nối thêm nếu thiếu /edit
+            });
+
+            $(document).on('click', '.btn-delete', function(e) {
+                e.preventDefault();
+                const id = $(this).data('id');
+                Swal.fire({
+                    title: 'Bạn có chắc chắn muốn xóa?',
+                    text: "Hành động này không thể hoàn tác!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Xóa',
+                    cancelButtonText: 'Hủy'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+
+                        $.ajax({
+                            url: '/contactTypes/' + id,
+                            type: 'POST',
+                            data: {
+                                _method: 'DELETE',
+                                _token: '{{ csrf_token() }}'
+                            },
+                            success: function(response) {
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'Đã xóa!',
+                                    text: response.message || 'Xóa thành công.'
+                                }).then(() => {
+                                    table.ajax.reload(null, false);
+                                });
+                            },
+                            error: function(xhr) {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Lỗi!',
+                                    text: 'Không thể xóa. Vui lòng thử lại.'
+                                });
+                            }
+                        });
+                    }
+                });
             });
         });
     </script>
