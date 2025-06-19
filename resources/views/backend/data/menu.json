@@ -38,6 +38,11 @@
                 "title": "Loại hợp đồng",
                 "url": "/contactTypes",
                 "active": false
+            },
+            {
+                "title": "Hạng mục",
+                "url": "/categorys",
+                "active": false
             }
 
         ]
