@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Backend\AuthController;
 use App\Http\Controllers\Backend\BirthDayController;
+use App\Http\Controllers\Backend\BulkActionController;
 use App\Http\Controllers\Backend\CategoryController;
 use App\Http\Controllers\Backend\ContractTypeController;
 use App\Http\Controllers\Backend\DashboardController;
@@ -23,6 +24,8 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('admin.auth')->group(function () {
 
     Route::get('/', [DashboardController::class, 'dashboard'])->name('dashboard');
+
+    Route::post('handle-bulk-action', [BulkActionController::class, 'handleBulkAction']);
 
     Route::group(['prefix' => 'employees', 'controller' => EmployeeController::class, 'as' => 'employees.'], function () {
         Route::get('/', 'index');

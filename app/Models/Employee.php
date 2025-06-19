@@ -5,10 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
+use Spatie\Permission\Traits\HasRoles;
 
 class Employee extends Model
 {
-    use HasFactory;
+    use HasFactory, HasRoles;
 
 
     protected $fillable = [
@@ -18,6 +19,8 @@ class Employee extends Model
         'employment_status_id',
         'code',
         'full_name',
+        'email',
+        'password',
         'avatar',
         'phone',
         'address',
@@ -28,7 +31,8 @@ class Employee extends Model
         'university_start_date',
         'university_end_date',
         'resignation_date',
-        'notes'
+        'notes',
+        'status'
     ];
 
     public function position()
@@ -61,6 +65,7 @@ class Employee extends Model
         'university_start_date' => 'date',
         'university_end_date' => 'date',
         'resignation_date' => 'date',
+        'status' => 'boolean'
     ];
 
     public function getNameCodeAttribute()
@@ -161,14 +166,24 @@ class Employee extends Model
         return implode(' ', $parts);
     }
 
-    public function getStartDateAttribute(){
+    public function getStartDateAttribute()
+    {
         return $this->contract && $this->contract->start_date ? $this->contract->start_date->format('d-m-Y') : '<span class="text-muted">Chưa xác định</span>';
     }
 
-    public function getEndDateAttribute(){
+    public function getEndDateAttribute()
+    {
         return $this->contract && $this->contract->end_date ? $this->contract->end_date->format('d-m-Y') : '<span class="text-muted">Chưa xác định</span>';
     }
-    public function getContractTypeAttribute(){
+    public function getContractTypeAttribute()
+    {
         return $this->contract && $this->contract->contractType ? $this->contract->contractType->name : '<span class="text-muted">Chưa xác định</span>';
+    }
+
+    protected static function booted()
+    {
+        static::deleting(function ($employee) {
+            deleteImage($employee->avatar);
+        });
     }
 }

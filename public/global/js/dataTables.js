@@ -22,7 +22,7 @@ const dataTables = (
 
     if (hasCheckbox)
         thead +=
-            '<th><input type="checkbox" id="selectAll" class="form-check-input" /></th>';
+            '<th><input type="checkbox" id="checkedAll" class="form-check-input" /></th>';
     thead += columns
         .filter((col) => col.className !== "dt-control")
         .map((col) => `<th>${col.title || ""}</th>`)
@@ -143,6 +143,47 @@ const dataTables = (
 
     const table = $table.DataTable(options);
 
+    const targetDiv = $(".dt-layout-cell.dt-layout-start .dt-length");
+
+    let _html = `
+        <div id="actionBox" class="d-none">
+            <select class="form-select form-select-sm" id="bulkAction">
+                <option value="">-- Chọn hành động --</option>
+                <option value="delete">Xóa đã chọn</option>
+                <option value="change-status">Khóa tài khoản</option>
+            </select>
+        </div>
+        `;
+
+    targetDiv.after(_html);
+
+    $(document).on("change", "#checkedAll", function () {
+        console.log(123);
+        const isChecked = $(this).is(":checked");
+        $(".row-checkbox").prop("checked", isChecked);
+        toggleActionBox();
+    });
+
+    $(document).on("change", ".row-checkbox", function () {
+        const all = $table.find(".row-checkbox").length;
+        const checked = $table.find(".row-checkbox:checked").length;
+
+        // Nếu tất cả được chọn thì check lại #selectAll
+        $("#checkedAll").prop("checked", all === checked);
+
+        // Hiển thị action box nếu có ít nhất 1 dòng được chọn
+        toggleActionBox();
+    });
+
+    function toggleActionBox() {
+        const anyChecked = $table.find(".row-checkbox:checked").length > 0;
+        if (anyChecked) {
+            $("#actionBox").removeClass("d-none");
+        } else {
+            $("#actionBox").addClass("d-none");
+        }
+    }
+
     // Date range filter
     if (hasDateRange) {
         const $target = $(".dt-layout-cell.dt-layout-start .dt-length");
@@ -185,4 +226,158 @@ const dataTables = (
     });
 
     return table;
+};
+
+const initBulkAction = (modelName) => {
+    $(document).on("change", "#bulkAction", function () {
+        const action = $(this).val();
+        const ids = $(".row-checkbox:checked")
+            .map(function () {
+                return $(this).val();
+            })
+            .get();
+
+        if (!action || ids.length === 0) {
+            datgin.warning("Vui lòng chọn hành động và ít nhất 1 bản ghi.");
+            $(this).val(""); // reset lại select
+            return;
+        }
+
+        let confirmText = "Bạn có chắc chắn muốn thực hiện hành động này?";
+        let confirmButton = "Xác nhận";
+
+        if (action === "delete") {
+            confirmText = "Bạn có chắc chắn muốn xóa các mục đã chọn?";
+            confirmButton = "Xóa";
+        } else if (action === "change-status") {
+            confirmText = "Bạn có chắc chắn muốn khóa các tài khoản đã chọn?";
+            confirmButton = "Khóa";
+        }
+
+        Swal.fire({
+            title: "Xác nhận hành động",
+            text: confirmText,
+            icon: "question",
+            showCancelButton: true,
+            confirmButtonText: confirmButton,
+            cancelButtonText: "Hủy",
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: "/handle-bulk-action",
+                    method: "POST",
+                    data: {
+                        type: action,
+                        model: modelName,
+                        ids: ids,
+                    },
+                    success: function (res) {
+                        $("table").DataTable().ajax.reload();
+                        datgin.success(res.message);
+                        $("#bulkAction").val("");
+                        $("#actionBox").addClass("d-none");
+                        $("#checkedAll").prop("checked", false);
+                    },
+                    error: function (xhr) {
+                        datgin.error(
+                            xhr.responseJSON.message ||
+                                "Đã có lỗi xảy ra, vui lòng thử lại sau!"
+                        );
+                    },
+                });
+            } else {
+                $("#bulkAction").val(""); // reset nếu hủy
+            }
+        });
+    });
+};
+
+const initStatusToggle = ({
+    model,
+    successCallback = null,
+    errorCallback = null,
+}) => {
+    $(document).on("change", '.switch input[type="checkbox"]', function () {
+        const checkbox = $(this);
+        const newChecked = checkbox.prop("checked");
+        const id = checkbox.closest(".switch").data("id");
+
+        Swal.fire({
+            title: "Bạn có chắc chắn?",
+            text: "Hành động này không thể hoàn tác!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Vâng, thay đổi!",
+            cancelButtonText: "Hủy",
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: "/handle-bulk-action",
+                    type: "POST",
+                    data: {
+                        model: model,
+                        type: "change-status",
+                        ids: id,
+                    },
+                    success: function (res) {
+                        datgin.success(res.message);
+                        if (typeof successCallback === "function")
+                            successCallback(res, id, newChecked);
+                    },
+                    error: function (xhr) {
+                        checkbox.prop("checked", !newChecked); // Quay về nếu lỗi
+                        datgin.error(
+                            xhr.responseJSON?.message ||
+                                "Đã có lỗi xảy ra, vui lòng thử lại sau!"
+                        );
+                        if (typeof errorCallback === "function")
+                            errorCallback(xhr, id, newChecked);
+                    },
+                });
+            } else {
+                checkbox.prop("checked", !newChecked);
+            }
+        });
+    });
+};
+
+const handleDestroy = (model) => {
+    $(document).on("click", ".btn-delete", function () {
+        const id = $(this).data("id");
+
+        Swal.fire({
+            title: "Bạn có chắc chắn?",
+            text: "Hành động này không thể hoàn tác!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Vâng, xóa ngay!",
+            cancelButtonText: "Hủy",
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: "/handle-bulk-action",
+                    type: "POST",
+                    data: {
+                        type: "delete",
+                        model,
+                        ids: id,
+                    },
+                    success: function (res) {
+                        $("table").DataTable().ajax.reload();
+                        datgin.success(res.message);
+                    },
+                    error: function (xhr) {
+                        datgin.error(
+                            xhr.responseJSON.message ||
+                                "Đã có lỗi xảy ra, vui lòng thử lại sau!"
+                        );
+                    },
+                });
+            }
+        });
+    });
 };

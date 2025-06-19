@@ -19,9 +19,17 @@
             dataTables(api, {
                 fixedColumns: {
                     left: 6,
-                    right: 1
+                    right: 2
                 },
             })
+
+            handleDestroy('Employee')
+
+            initStatusToggle({
+                model: 'Employee'
+            });
+
+            initBulkAction('Employee')
         })
     </script>
 @endpush

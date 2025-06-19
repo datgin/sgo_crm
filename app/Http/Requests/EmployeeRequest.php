@@ -26,6 +26,8 @@ class EmployeeRequest extends FormRequest
         return [
             'code' => ['nullable', 'string', 'max:50', "unique:employees,code,{$id}"],
             'full_name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'email', 'string', 'max:255'],
+            'password' => [$id ? 'nullable' : 'required', 'string', 'max:255', 'min:8', 'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/'],
             'phone' => ['nullable', 'string', 'regex:/^0\d{9}$/', "unique:employees,phone,{$id}"], // hoặc đổi theo format bạn muốn
             'address' => ['nullable', 'string', 'max:255'],
             'birthday' => ['nullable', 'date_format:d-m-Y', 'before:today'],
