@@ -103,7 +103,7 @@
                 <x-submit />
 
                 <x-card title="Ảnh 3x4" class="text-center">
-                    <x-file name="avatar" :value="$employee->avatar ?? ''" />
+                    <x-file name="avatar" :value="$employee->avatar ?? showImage('')" />
                 </x-card>
 
                 <x-card title="Tình trạng làm việc">
@@ -114,6 +114,10 @@
                 <x-card title="Ghi chú">
                     <x-input name="notes" :value="$employee->notes ?? ''" placeholder="Ghi chú" id="notes" type="textarea" />
                 </x-card>
+
+                <x-card title="Media">
+                    <x-media name="gallery" :multiple="false" />
+                </x-card>
             </div>
         </div>
     </form>
@@ -122,43 +126,43 @@
 @push('scripts')
     <script>
         $(function() {
-            // formValidator.set({
-            //     code: "nullable|max:50",
-            //     full_name: 'required|max:255',
-            //     phone: 'nullbale|regex:/^0\d{9}$/',
-            //     address: 'nullable|max:255',
-            //     birthday: 'nullable|date_format:d-m-Y|before_today',
-            //     gender: 'required|in:male,female,other',
-            //     cccd: 'nullable|numeric|digits_between:9,12',
-            //     cccd_issued_date: 'nullable|date_format:d-m-Y|before_or_equal:today',
-            //     university_start_date: 'nullable|date_format:d-m-Y',
-            //     university_end_date: 'nullable|date_format:d-m-Y|after_or_equal:university_start_date',
-            //     position_id: 'required',
-            //     department_id: 'required',
-            //     education_level_id: 'required',
-            //     employment_status_id: 'required',
-            //     resignation_date: 'nullable|date_format:d-m-Y|after_or_equal:birthday',
-            //     notes: 'nullable|max:1000',
-            //     avatar: "required|file|mimes:jpeg,png,jpg,webp|max_size:2048"
-            // }, {
-            //     code: "Mã nhân viên",
-            //     full_name: "Họ tên",
-            //     phone: "Số điện thoại",
-            //     address: "Địa chỉ",
-            //     birthday: "Ngày sinh",
-            //     gender: "Giới tính",
-            //     cccd: "Số CCCD",
-            //     cccd_issued_date: "Ngày cấp CCCD",
-            //     university_start_date: "Ngày bắt đầu đại học",
-            //     university_end_date: "Ngày kết thúc đại học",
-            //     position_id: "Vị trí",
-            //     department_id: "Phòng ban",
-            //     education_level_id: "Trình độ học vấn",
-            //     employment_status_id: "Tình trạng làm việc",
-            //     resignation_date: "Ngày nghỉ việc",
-            //     notes: "Ghi chú",
-            //     avatar: "Ảnh đại diện"
-            // });
+            formValidator.set({
+                code: "nullable|max:50",
+                full_name: 'required|max:255',
+                phone: 'nullable|regex:^0\\d{9}$',
+                address: 'nullable|max:255',
+                birthday: 'nullable|date_format:d-m-Y|before_today',
+                gender: 'required|in:male,female,other',
+                cccd: 'nullable|numeric|digits_between:9,12',
+                cccd_issued_date: 'nullable|date_format:d-m-Y|before_or_equal:today',
+                university_start_date: 'nullable|date_format:d-m-Y',
+                university_end_date: 'nullable|date_format:d-m-Y|after_or_equal:university_start_date',
+                position_id: 'required',
+                department_id: 'required',
+                education_level_id: 'required',
+                employment_status_id: 'required',
+                resignation_date: 'nullable|date_format:d-m-Y|after_or_equal:birthday',
+                notes: 'nullable|max:1000',
+                avatar: "required|file|mimes:jpeg,png,jpg,webp|max_size:2048"
+            }, {
+                code: "Mã nhân viên",
+                full_name: "Họ tên",
+                phone: "Số điện thoại",
+                address: "Địa chỉ",
+                birthday: "Ngày sinh",
+                gender: "Giới tính",
+                cccd: "Số CCCD",
+                cccd_issued_date: "Ngày cấp CCCD",
+                university_start_date: "Ngày bắt đầu đại học",
+                university_end_date: "Ngày kết thúc đại học",
+                position_id: "Vị trí",
+                department_id: "Phòng ban",
+                education_level_id: "Trình độ học vấn",
+                employment_status_id: "Tình trạng làm việc",
+                resignation_date: "Ngày nghỉ việc",
+                notes: "Ghi chú",
+                avatar: "Ảnh đại diện"
+            });
 
             submitForm("#myForm", function(response) {
                 window.location.href = response.data.redirect

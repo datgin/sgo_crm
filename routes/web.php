@@ -6,6 +6,7 @@ use App\Http\Controllers\Backend\CategoryController;
 use App\Http\Controllers\Backend\ContractTypeController;
 use App\Http\Controllers\Backend\DashboardController;
 use App\Http\Controllers\Backend\EmployeeController;
+use App\Http\Controllers\Backend\MediaItemController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -32,6 +33,12 @@ Route::middleware('admin.auth')->group(function () {
         Route::get('/information', 'information')->name('information');
     });
 
+    Route::group(['prefix' => 'media', 'controller' => MediaItemController::class], function () {
+        Route::get('/', 'list');
+        Route::post('upload', 'upload');
+    });
+
+
     Route::group(['prefix' => 'birthdays', 'controller' => BirthDayController::class, 'as' => 'birthdays.'], function () {
         Route::get('/', 'index')->name('index');
     });
@@ -45,10 +52,12 @@ Route::middleware('admin.auth')->group(function () {
         Route::delete('/{id}', 'destroy')->name('destroy');
     });
 
+
     Route::group(['prefix' => 'categorys', 'controller' => CategoryController::class, 'as' => 'categorys.'], function () {
         Route::get('/', 'index')->name('index');
         Route::post('/update-or-create', 'updateOrCreateOrDelete')->name('updateOrCreate');
     });
+
 
 });
 

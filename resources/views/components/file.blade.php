@@ -8,7 +8,7 @@
             style="width: 150px; height: 200px; object-fit: cover; border: 1px solid #ccc;">
         <input type="file" id="{{ $uid }}" name="{{ $multiple ? $name . '[]' : $name }}"
             {{ $multiple ? 'multiple' : '' }} class="d-none" accept="{{ $accept }}">
-        <small class="text-danger error-message"></small>
+        <small class="text-danger error-message {{ $name }}"></small>
     </label>
 </div>
 

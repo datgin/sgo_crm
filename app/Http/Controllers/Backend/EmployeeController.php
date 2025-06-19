@@ -14,7 +14,9 @@ use App\Traits\DataTables;
 use App\Traits\QueryBuilder;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 
 class EmployeeController extends Controller
 {
@@ -59,7 +61,7 @@ class EmployeeController extends Controller
     public function view($id, Request $request)
     {
         try {
-            $employees = Employee::all();
+            $employees = Employee::query()->pluck('full_name', 'id')->toArray();
             $employeeId = $request->input('id', $id);
 
             $employee = Employee::with([
@@ -78,17 +80,17 @@ class EmployeeController extends Controller
                     'age'                => $employee->birthday->age . ' tuổi',
                     'department'         => $employee->department->name,
                     'position'           => $employee->position->name,
-                    'birthday'           => $employee->birthday ? $employee->birthday->format('d/m/Y') : "",
+                    'birthday'           => $employee->birthday ? $employee->birthday->format('d/m/Y') : "<span class='text-muted'>Chưa xác định</span>",
                     'phone'              => $employee->phone,
                     'cccd'               => $employee->cccd,
                     'code'               => $employee->code,
                     'address'            => $employee->address,
-                    'start_date'         => "",
-                    'end_date'           =>  "",
+                    'start_date'         => $employee->startDate,
+                    'end_date'           => $employee->endDate,
                     'seniority_detail'   => $employee->seniority_detail,
-                    'contract_type'      => $employee->contract  && $employee->contract->contractType ? $employee->contract->contractType->name : "",
+                    'contract_type'      => $employee->contractType,
                     'employment_status'  => $employee->employmentStatus->name,
-                    'resignation_date'   => "",
+                    'resignation_date'   => $employee->resignation_date ? $employee->resignation_date->format('d/m/Y') : "<span class='text-muted'>Chưa xác định</span>",
                     'notes'              => $employee->notes,
                     'education_level'    => $employee->educationLevel->name,
                 ]);
@@ -152,7 +154,7 @@ class EmployeeController extends Controller
         return transaction(function () use ($request, &$uploadAvatar) {
             $credentials = $request->validated();
 
-            $credentials['code'] ??= generateUniqueCode('employees');
+            $credentials['code'] ??= $this->generateEmployeeCode();
 
             if ($request->hasFile('avatar')) {
                 $uploadAvatar = uploadImages('avatar', 'employee');
@@ -171,12 +173,12 @@ class EmployeeController extends Controller
     {
         $uploadAvatar = null;
         $employee = Employee::query()->findOrFail($id);
-        $oldAvatar = $employee->avatar;
+        $oldAvatar = $employee->getRawOriginal('avatar');
 
         return transaction(function () use ($request, &$uploadAvatar, $id, $oldAvatar, $employee) {
             $credentials = $request->validated();
 
-            $credentials['code'] ??= generateUniqueCode('employees');
+            $credentials['code'] ??= $this->generateEmployeeCode();
 
             if ($request->hasFile('avatar')) {
                 $uploadAvatar = uploadImages('avatar', 'employee');
@@ -190,5 +192,25 @@ class EmployeeController extends Controller
         }, function () use ($uploadAvatar) {
             deleteImage($uploadAvatar);
         });
+    }
+
+    private function generateEmployeeCode(): string
+    {
+        // Tìm mã lớn nhất hiện tại trong database
+        $lastCode = Employee::query()
+            ->where('code', 'like', 'NS%')
+            ->orderByDesc(DB::raw('CAST(SUBSTRING(code, 3) AS UNSIGNED)'))
+            ->value('code');
+
+        if (!$lastCode) {
+            return 'NS001';
+        }
+
+        // Lấy phần số phía sau mã
+        $number = (int) Str::after($lastCode, 'NS');
+        $nextNumber = $number + 1;
+
+        // Tạo mã mới có dạng NS001 hoặc NS1000
+        return 'NS' . str_pad($nextNumber, strlen($number < 1000 ? 3 : strlen((string)$nextNumber)), '0', STR_PAD_LEFT);
     }
 }

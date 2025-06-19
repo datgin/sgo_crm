@@ -3,11 +3,10 @@
         {{ $label }}
     </label>
 @endif
-
 <select name="{{ $multiple ? $name . '[]' : $name }}" id="{{ $id }}" class="form-control"
     {{ $multiple ? 'multiple' : '' }}>
     @unless ($multiple)
-        <option value="">-- Chọn {{ strtolower($label) }} --</option>
+        <option value="">-- Chọn {{ strtolower($placeholder ?? $label) }} --</option>
     @endunless
     @foreach ($options as $key => $text)
         <option value="{{ $key }}"
@@ -18,8 +17,7 @@
     @endforeach
 </select>
 
-
-<small class="text-danger error-message"></small>
+<small class="text-danger error-message {{ $name }}"></small>
 
 @push('scripts')
     <script>
@@ -29,7 +27,7 @@
                 new Choices(element, {
                     removeItemButton: {{ $multiple ? 'true' : 'false' }},
                     placeholder: true,
-                    placeholderValue: 'Chọn {{ strtolower($label) }}',
+                    placeholderValue: 'Chọn {{ strtolower($placeholder ?? $label) }}',
                     shouldSort: false,
                     searchEnabled: true
                 });

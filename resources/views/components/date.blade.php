@@ -7,7 +7,7 @@
 <input type="text" name="{{ $name }}" id="{{ $id }}" class="form-control" value="{{ $value }}"
     placeholder="Chọn {{ strtolower($placeholder ?? $label) }}" autocomplete="off">
 
-<small class="text-danger error-message"></small>
+<small class="text-danger error-message {{ $name }}"></small>
 
 @push('scripts')
     <script>

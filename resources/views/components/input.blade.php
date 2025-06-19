@@ -14,4 +14,4 @@
         @disabled($disabled)>{!! $value !!}</textarea>
 @endif
 
-<small class="text-danger error-message"></small>
+<small class="text-danger error-message {{ $name }}"></small>
