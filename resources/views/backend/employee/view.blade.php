@@ -15,19 +15,9 @@
                 <div class="row mb-4">
                     <div class="col-md-6">
                         <div class="row align-items-center">
-                            <div class="col-auto">
-                                <label class="form-label fw-bold mb-0">Nhân viên:</label>
-                            </div>
                             <div class="col">
-                                <select name="employee_id" id="employeeSelect" class="form-select form-select-sm select2"
-                                    style="width: 100%;">
-                                    @foreach ($employees as $emp)
-                                        <option value="{{ $emp->id }}"
-                                            {{ $emp->id === $employee->id ? 'selected' : '' }}>
-                                            {{ $emp->full_name }}
-                                        </option>
-                                    @endforeach
-                                </select>
+                                <x-select name="employee_id" id="employeeSelect" placeholder="nhân viên"
+                                    :options="$employees" />
                             </div>
                         </div>
                     </div>
@@ -36,8 +26,9 @@
                 <div class="row">
                     <div class="col-md-4">
                         <div class="text-center">
-                            <div class="photo-frame mb-3" id="employeeAvatar">
-                                <img src="{{ $employee->avatar }}" alt="Ảnh nhân viên" class="img-fluid">
+                            <div class="photo-frame mb-3">
+                                <img id="employeeAvatar" src="{{ $employee->avatar }}" alt="Ảnh nhân viên"
+                                    class="img-fluid">
                             </div>
                             <h5 class="fw-bold mb-1" id="employeeFullName">{{ $employee->full_name }}</h5>
                             <p class="text-muted  mb-1">Giới tính: <span
@@ -87,13 +78,13 @@
                                     <tr>
                                         <td class="label-col">Thời gian vào làm:</td>
                                         <td id="employeeStartDate">
-                                            {{-- {{ $employee->contract && $employee->contract->start_date ? $employee->contract->start_date->format('d/m/Y') : '' }} --}}
+                                            {!! $employee->start_date !!}
                                         </td>
                                     </tr>
                                     <tr>
                                         <td class="label-col">Thời gian kết thúc hợp đồng:</td>
                                         <td id="employeeEndDate" class="text-danger">
-                                            {{-- {{ $employee->contract && $employee->contract->end_date ? $employee->contract->end_date->format('d/m/Y') : '' }} --}}
+                                            {!! $employee->end_date !!}
                                         </td>
                                     </tr>
                                     <tr>
@@ -103,7 +94,7 @@
                                     <tr>
                                         <td class="label-col">Loại HĐ:</td>
                                         <td id="employeeContractType" class="text-warning">
-                                            {{ $employee->contract && $employee->contract->contractType ? $employee->contract->contractType->name : '' }}
+                                            {!! $employee->contract_type !!}
                                         </td>
                                     </tr>
                                     <tr>
@@ -116,11 +107,13 @@
                                     <tr>
                                         <td class="label-col">Ngày nghỉ việc:</td>
                                         <td id="employeeResignationDate">
-                                            {{-- {{ $employee->resignation_date ? $employee->resignation_date->format('d/m/Y') : '' }} --}}
+                                            {!! $employee->resignation_date
+                                                ? $employee->resignation_date->format('d/m/Y')
+                                                : "<span class='text-muted'>Chưa xác định</span>" !!}
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td class="label-col">Lý do:</td>
+                                        <td class="label-col">Ghi chú:</td>
                                         <td id="employeeNotes">{{ $employee->notes }}</td>
                                     </tr>
                                 </tbody>
@@ -159,7 +152,6 @@
     {{-- </div> --}}
 @endsection
 @push('styles')
-    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <style>
         .employee-detail-form {
             background: white;
@@ -228,17 +220,12 @@
     </style>
 @endpush
 @push('scripts')
-    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-
     <script>
         $(document).ready(function() {
-            $('.select2').select2({
-                placeholder: 'Chọn nhân viên...',
-                allowClear: true
-            });
+
             const urlTemplate = '{{ route('employees.view', ['id' => ':id']) }}';
             // Khi đổi select
-            $('.select2').on('change', function() {
+            $('select[name="employee_id"]').on('change', function() {
                 let id = $(this).val();
                 if (!id) return;
                 const url = urlTemplate.replace(':id', id);
@@ -248,31 +235,33 @@
                     success: function(d) {
                         console.log(d);
                         // Cập nhật ảnh & văn bản
+
                         $('#employeeAvatar').attr('src', d.avatar);
+                        console.log($('#employeeAvatar').attr('src'));
                         $('#employeeFullName').text(d.full_name);
                         $('#employeeGender').text(d.gender_text);
                         $('#employeeAge').text(d.age);
 
                         // Personal info
-                        $('#employeeBirthday').text(d.birthday);
+                        $('#employeeBirthday').html(d.birthday);
                         $('#employeePhone').text(d.phone);
                         $('#employeeCCCD').text(d.cccd);
                         $('#employeeCode').text(d.code);
                         $('#employeeAddress').text(d.address);
 
                         // Work info
-                        $('#employeeStartDate').text(d.start_date);
-                        $('#employeeEndDate').text(d.end_date);
+                        $('#employeeStartDate').html(d.start_date);
+                        $('#employeeEndDate').html(d.end_date);
                         $('#employeeSeniority').text(d.seniority_detail);
-                        $('#employeeContractType').text(d.contract_type);
+                        $('#employeeContractType').html(d.contract_type);
 
                         // Trạng thái: đổi màu luôn
                         $('#employeeStatus')
-                            .text(d.employment_status)
-                            .toggleClass('text-danger', d.employment_status === 'Nghỉ việc')
-                            .toggleClass('text-success', d.employment_status !== 'Nghỉ việc');
+                            .text(d.employment_status);
+                        // .toggleClass('text-danger', d.employment_status === 'Nghỉ việc')
+                        // .toggleClass('text-success', d.employment_status !== 'Nghỉ việc');
 
-                        $('#employeeResignationDate').text(d.resignation_date);
+                        $('#employeeResignationDate').html(d.resignation_date);
                         $('#employeeNotes').text(d.notes);
 
                         // Education

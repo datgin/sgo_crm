@@ -5,6 +5,7 @@ use App\Http\Controllers\Backend\BirthDayController;
 use App\Http\Controllers\Backend\ContractTypeController;
 use App\Http\Controllers\Backend\DashboardController;
 use App\Http\Controllers\Backend\EmployeeController;
+use App\Http\Controllers\Backend\MediaItemController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -31,6 +32,12 @@ Route::middleware('admin.auth')->group(function () {
         Route::get('/information', 'information')->name('information');
     });
 
+    Route::group(['prefix' => 'media', 'controller' => MediaItemController::class], function () {
+        Route::get('/', 'list');
+        Route::post('upload', 'upload');
+    });
+
+
     Route::group(['prefix' => 'birthdays', 'controller' => BirthDayController::class, 'as' => 'birthdays.'], function () {
         Route::get('/', 'index')->name('index');
     });
@@ -43,7 +50,6 @@ Route::middleware('admin.auth')->group(function () {
         Route::put('/{id}', 'update')->name('update');
         Route::delete('/{id}', 'destroy')->name('destroy');
     });
-
 });
 
 

@@ -160,4 +160,15 @@ class Employee extends Model
 
         return implode(' ', $parts);
     }
+
+    public function getStartDateAttribute(){
+        return $this->contract && $this->contract->start_date ? $this->contract->start_date->format('d-m-Y') : '<span class="text-muted">Chưa xác định</span>';
+    }
+
+    public function getEndDateAttribute(){
+        return $this->contract && $this->contract->end_date ? $this->contract->end_date->format('d-m-Y') : '<span class="text-muted">Chưa xác định</span>';
+    }
+    public function getContractTypeAttribute(){
+        return $this->contract && $this->contract->contractType ? $this->contract->contractType->name : '<span class="text-muted">Chưa xác định</span>';
+    }
 }

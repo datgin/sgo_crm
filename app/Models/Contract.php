@@ -27,4 +27,9 @@ class Contract extends Model
     {
         return $this->belongsTo(ContractType::class);
     }
+
+    protected $casts = [
+        'start_date' => 'date',
+        'end_date' => 'date'
+    ];
 }

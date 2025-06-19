@@ -9,6 +9,8 @@
 <script src="{{ asset('assets/backend/js/choices.min.js') }}"></script>
 <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.14.0/Sortable.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.4/js/lightbox.min.js"></script>
 
 <!-- Ionicons -->
 <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
@@ -24,5 +26,13 @@
 <script src="{{ asset('global/js/toastr.js') }}"></script>
 <script src="{{ asset('global/js/helpers.js') }}"></script>
 <script src="{{ asset('global/js/validate.js') }}"></script>
+
+<script>
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
+</script>
 
 @stack('scripts')

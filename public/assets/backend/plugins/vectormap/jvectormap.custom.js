@@ -56,7 +56,7 @@ $(function () {
 		zoomOnScroll: false,
 		regionStyle: {
 			initial: {
-				fill: '#f73757'
+				fill: '#d63939'
 			}
 		}
 	});

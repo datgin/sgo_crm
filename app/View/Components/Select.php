@@ -18,7 +18,9 @@ class Select extends Component
         public bool $multiple = false,
         public bool $required = false,
         public string $label = "",
-        public ?string $id = null
+        public ?string $id = null,
+        public ?string $placeholder = null,
+
     ) {
         // Nếu $id không truyền vào thì tự gán = $name
         $this->id = $id ?: $name;

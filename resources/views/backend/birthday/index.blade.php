@@ -4,17 +4,19 @@
     <div class="my-3">
         <div class="row align-items-center mb-3">
             <div class="col-md-4">
-                <label for="monthFilter" class="form-label fw-semibold">
-                    🔍 Bộ lọc theo tháng:
-                </label>
-                <select id="monthFilter" class="form-select bg-warning-subtle text-dark fw-bold border border-dark"
-                    name="month">
-                    @for ($i = 1; $i <= 12; $i++)
-                        <option value="{{ $i }}" {{ $i == now()->month ? 'selected' : '' }}>
-                            Tháng {{ $i }}
-                        </option>
-                    @endfor
-                </select>
+                <h4 class="mb-3"> 🔍 Bộ lọc theo tháng</h4>
+                @php
+                    $monthOptions = collect(range(1, 12))
+                        ->mapWithKeys(function ($month) {
+                            return [$month => 'Tháng ' . $month];
+                        })
+                        ->toArray();
+
+                    $currentMonth = now()->month;
+                @endphp
+
+                <x-select id="monthFilter" name="month_filter" placeholder="tháng" :options="$monthOptions" :value="$currentMonth" />
+
             </div>
 
             <div class="col-md-8">
@@ -83,11 +85,9 @@
                     url: '{{ route('birthdays.index') }}',
                     type: 'GET',
                     data: function(d) {
-
                         d.month = $('#monthFilter').val();
                     },
                     dataSrc: function(json) {
-
                         $('#total-month').text(json.total_in_month);
                         $('#total-today').text(json.total_today);
                         $('#today-date').text(json.today);

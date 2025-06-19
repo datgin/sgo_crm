@@ -17,30 +17,4 @@
     <link rel="stylesheet" href="{{ asset('assets/backend/css/dataTables.min.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/backend/css/fixedColumns.dataTables.min.css') }}">
 
-    <style>
-        ::-webkit-scrollbar {
-            width: 6px;
-            height: 6px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: transparent;
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background-color: #adb5bd;
-            border-radius: 10px;
-            border: 1px solid transparent;
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background-color: #6c757d;
-        }
-
-        /* ---------- Scrollbar cho Firefox ---------- */
-        * {
-            scrollbar-width: thin;
-            scrollbar-color: #adb5bd transparent;
-        }
-    </style>
 @endpush

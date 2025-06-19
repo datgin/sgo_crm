@@ -70,8 +70,8 @@ $(function () {
 	};
 	var chart = new ApexCharts(document.querySelector("#chart1"), options);
 	chart.render();
-	
-	
+
+
 	// chart 2
 	var optionsLine = {
 		chart: {
@@ -138,8 +138,8 @@ $(function () {
 	}
 	var chartLine = new ApexCharts(document.querySelector('#chart2'), optionsLine);
 	chartLine.render();
-	
-	
+
+
 	// chart 3
 	var options = {
 		series: [{
@@ -187,7 +187,7 @@ $(function () {
 	};
 	var chart = new ApexCharts(document.querySelector("#chart3"), options);
 	chart.render();
-	
+
 	// chart 4
 	var options = {
 		series: [{
@@ -249,8 +249,8 @@ $(function () {
 	};
 	var chart = new ApexCharts(document.querySelector("#chart4"), options);
 	chart.render();
-	
-	
+
+
 	// chart 5
 	var options = {
 		series: [{
@@ -278,8 +278,8 @@ $(function () {
 	};
 	var chart = new ApexCharts(document.querySelector("#chart5"), options);
 	chart.render();
-	
-	
+
+
 	// chart 6
 	var options = {
 		series: [{
@@ -337,8 +337,8 @@ $(function () {
 	};
 	var chart = new ApexCharts(document.querySelector("#chart6"), options);
 	chart.render();
-	
-	
+
+
 	// chart 7
 	var options = {
 		series: [{
@@ -415,8 +415,8 @@ $(function () {
 	};
 	var chart = new ApexCharts(document.querySelector("#chart7"), options);
 	chart.render();
-	
-	
+
+
 	// chart 8
 	var options = {
 		series: [44, 55, 13, 43, 22],
@@ -425,7 +425,7 @@ $(function () {
 			height: 330,
 			type: 'pie',
 		},
-		colors: ["#923eb9", "#f73757", "#18bb6b", "#32bfff", "#ffab4d"],
+		colors: ["#923eb9", "#d63939", "#18bb6b", "#32bfff", "#ffab4d"],
 		labels: ['Team A', 'Team B', 'Team C', 'Team D', 'Team E'],
 		responsive: [{
 			breakpoint: 480,
@@ -441,8 +441,8 @@ $(function () {
 	};
 	var chart = new ApexCharts(document.querySelector("#chart8"), options);
 	chart.render();
-	
-	
+
+
 	// chart 9
 	var options = {
 		series: [44, 55, 41, 17, 15],
@@ -451,7 +451,7 @@ $(function () {
 			height: 380,
 			type: 'donut',
 		},
-		colors: ["#923eb9", "#f73757", "#18bb6b", "#32bfff", "#ffab4d"],
+		colors: ["#923eb9", "#d63939", "#18bb6b", "#32bfff", "#ffab4d"],
 		responsive: [{
 			breakpoint: 480,
 			options: {
@@ -466,8 +466,8 @@ $(function () {
 	};
 	var chart = new ApexCharts(document.querySelector("#chart9"), options);
 	chart.render();
-	
-	
+
+
 	// chart 10
 	var options = {
 		series: [{
@@ -491,7 +491,7 @@ $(function () {
 				top: 1
 			}
 		},
-		colors: ["#923eb9", "#f73757", "#18bb6b"],
+		colors: ["#923eb9", "#d63939", "#18bb6b"],
 		title: {
 			text: 'Radar Chart - Multi Series'
 		},
@@ -510,8 +510,8 @@ $(function () {
 	};
 	var chart = new ApexCharts(document.querySelector("#chart10"), options);
 	chart.render();
-	
-	
+
+
 	// chart 11
 	var options = {
 		series: [{
@@ -572,11 +572,11 @@ $(function () {
 	};
 	var chart = new ApexCharts(document.querySelector("#chart11"), options);
 	chart.render();
-	
-	
-	
+
+
+
 	// chart 12
-	
+
 	var options = {
           series: [70],
           chart: {
@@ -597,11 +597,11 @@ $(function () {
 
         var chart = new ApexCharts(document.querySelector("#chart12"), options);
         chart.render();
-		
-		
-		
+
+
+
 	// chart 13
-	
+
 	var options = {
           series: [44, 55, 67, 83],
           chart: {
@@ -629,14 +629,14 @@ $(function () {
             }
           }
         },
-		colors: ["#923eb9", "#f73757", "#18bb6b", "#32bfff"],
+		colors: ["#923eb9", "#d63939", "#18bb6b", "#32bfff"],
         labels: ['Apples', 'Oranges', 'Bananas', 'Berries'],
         };
 
         var chart = new ApexCharts(document.querySelector("#chart13"), options);
         chart.render();
-		
-		
-	
-	
+
+
+
+
 });
