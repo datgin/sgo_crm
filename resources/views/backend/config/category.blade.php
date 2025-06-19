@@ -13,9 +13,7 @@
                     <tr>
                         <th>Vị Trí</th>
                         <th>Phòng ban</th>
-                        {{-- <th>Giới tính</th>
-                    <th>Hợp đồng</th>
-                    <th>Tình trạng làm việc</th> --}}
+                    
                         <th>Trình độ học vấn</th>
                     </tr>
                 </thead>
@@ -32,26 +30,7 @@
                                 {{ $row['departments']?->name }}
                             </td>
 
-                            {{-- <td contenteditable="true"
-                            data-id="{{ $row['gender']?->id }}"
-                            data-model="gender"
-                            data-field="value">
-                            {{ $row['gender']?->value }}
-                        </td>
 
-                        <td contenteditable="true"
-                            data-id="{{ $row['contractType']?->id }}"
-                            data-model="contractType"
-                            data-field="name">
-                            {{ $row['contractType']?->name }}
-                        </td>
-
-                        <td contenteditable="true"
-                            data-id="{{ $row['status']?->id }}"
-                            data-model="status"
-                            data-field="name">
-                            {{ $row['status']?->name }}
-                        </td> --}}
 
                             <td contenteditable="true" data-id="{{ $row['educations']?->id }}" data-model="EducationLevel"
                                 data-field="name">

@@ -12,26 +12,34 @@ class CategoryController extends Controller
 {
     public function index()
     {
-
+        $positions = Position::all()->values();
+        $departments = Department::all()->values();
+        $educations = EducationLevel::all()->values();
 
         $maxRows = max([
-            Position::count(),
-            Department::count(),
-            EducationLevel::count(),
+            $positions->count(),
+            $departments->count(),
+            $educations->count(),
         ]);
+
+        // Pad từng mảng cho đủ số hàng
+        $positions = $positions->pad($maxRows, null);
+        $departments = $departments->pad($maxRows, null);
+        $educations = $educations->pad($maxRows, null);
 
         $rows = [];
 
-        for ($i = 1; $i <= $maxRows; $i++) {
+        for ($i = 0; $i < $maxRows; $i++) {
             $rows[] = [
-                'positions' => Position::find($i),
-                'departments' => Department::find($i),
-                'educations' => EducationLevel::find($i),
+                'positions' => $positions[$i],
+                'departments' => $departments[$i],
+                'educations' => $educations[$i],
             ];
         }
 
         return view('backend.config.category', compact('rows'));
     }
+
 
     public function updateOrCreateOrDelete(Request $request)
     {
