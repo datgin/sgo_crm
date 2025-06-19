@@ -8,6 +8,7 @@
 
 <link rel="stylesheet" href="{{ asset('assets/backend/css/choices.min.css') }}" />
 <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+<link href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.4/css/lightbox.min.css" rel="stylesheet" />
 
 <!-- CSS Files -->
 <link href="{{ asset('assets/backend/css/bootstrap.min.css') }}" rel="stylesheet" />

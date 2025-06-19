@@ -109,15 +109,15 @@ $(document).ready(function () {
                     `${fieldLabel} phải sau hoặc bằng ${date}.`,
             };
 
-            for (let rule of fieldRules) {
-                if (
-                    fieldRules.includes("nullable") &&
-                    (!value || value.toString().trim() === "")
-                ) {
-                    errorMessage = "";
-                    break;
-                }
+            if (
+                fieldRules.includes("nullable") &&
+                (!value || value.toString().trim() === "")
+            ) {
+                errorMessage = "";
+                continue;
+            }
 
+            for (let rule of fieldRules) {
                 const [ruleName, ruleValue] = rule.includes(":")
                     ? rule.split(":", 2)
                     : [rule, null];
@@ -344,16 +344,13 @@ $(document).ready(function () {
             }
 
             if (errorMessage) {
-                inputElement
-                    .next(".error-message")
+                $(`.error-message.${field}`)
                     .text(errorMessage)
                     .css("display", "block");
+
                 isValid = false;
             } else {
-                inputElement
-                    .next(".error-message")
-                    .text("")
-                    .css("display", "none");
+                $(`.error-message.${field}`).text("").css("display", "none");
             }
         }
 
@@ -386,16 +383,29 @@ $(document).ready(function () {
 
     // Validate tự động khi gõ
     $(document).on(
-        "input change",
-        "input, textarea, select",
+        "input",
+        "input:not([type=file]):not([type=checkbox]):not([type=radio]), textarea",
         debounce(function () {
-            const fieldName = this.name;
-            const rules = formValidator.rules;
-            const attrs = formValidator.attributes;
-
-            if (rules[fieldName]) {
-                validate({ [fieldName]: rules[fieldName] }, attrs);
-            }
+            validateSingleField(this);
         }, 300)
     );
+
+    // validate khi chọn select hoặc thay đổi radio/checkbox
+    $(document).on(
+        "change",
+        "select, input[type=checkbox], input[type=radio], input[type=file]",
+        function () {
+            validateSingleField(this);
+        }
+    );
+
+    function validateSingleField(inputEl) {
+        const fieldName = inputEl.name;
+        const rules = formValidator.rules;
+        const attrs = formValidator.attributes;
+
+        if (rules[fieldName]) {
+            validate({ [fieldName]: rules[fieldName] }, attrs);
+        }
+    }
 });

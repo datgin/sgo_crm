@@ -1,6 +1,5 @@
-{{-- resources/views/backend/employee/partials/employee_list.blade.php --}}
 @forelse ($employees as $employee)
-    <div class="col-12 col-sm-6 col-md-4 col-lg-2">
+    <div class="col-12 col-sm-6 col-md-4 col-lg-3">
         <div class="employee-card">
             <img src="{{ $employee->avatar }}" alt="{{ $employee->full_name }}" class="employee-photo">
             <div class="employee-name">{{ $employee->full_name . '-' . $employee->code }}</div>

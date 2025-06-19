@@ -11,11 +11,11 @@ $(function() {
                 label: 'Electronics',
                 data: [12, 19, 13, 15, 20, 10, 14, 25, 10],
                 backgroundColor: [
-                    '#f73757'
+                    '#d63939'
                 ],
                 lineTension: 0,
                 borderColor: [
-                    '#f73757'
+                    '#d63939'
                 ],
                 borderWidth: 3
             },
@@ -43,7 +43,7 @@ $(function() {
     });
 
 
-    
+
     // chart2
     var ctx = document.getElementById('chart2').getContext('2d');
     var myChart = new Chart(ctx, {
@@ -96,7 +96,7 @@ $(function() {
                  data: [12, 19, 3, 5, 2, 3],
                  backgroundColor: [
                      '#923eb9',
-                     '#f73757',
+                     '#d63939',
                      '#18bb6b',
                      '#32bfff',
                      '#ffab4d',
@@ -107,10 +107,10 @@ $(function() {
          },
          options: {
             maintainAspectRatio: false,
-            
+
          }
      });
-    
+
 
 
       // chart4
@@ -123,7 +123,7 @@ $(function() {
                   data: [12, 19, 3, 5, 2, 3],
                   backgroundColor: [
                       '#923eb9',
-                      '#f73757',
+                      '#d63939',
                       '#18bb6b',
                       '#32bfff',
                       '#ffab4d',
@@ -134,13 +134,13 @@ $(function() {
           },
           options: {
              maintainAspectRatio: false,
-             
+
           }
       });
 
 
 
-      
+
       // chart5
       var ctx = document.getElementById('chart5').getContext('2d');
       var myChart = new Chart(ctx, {
@@ -189,7 +189,7 @@ $(function() {
 
 
 
-      
+
       // chart6
       var ctx = document.getElementById('chart6').getContext('2d');
       var myChart = new Chart(ctx, {
@@ -225,6 +225,6 @@ $(function() {
       });
 
 
-    
-    
+
+
 });

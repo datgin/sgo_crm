@@ -975,13 +975,13 @@ body.lobibox-open {
 }
 
 .lobibox-notify.lobibox-notify-error {
-	border-color: #f73757;
-	background-color: #f73757;
+	border-color: #d63939;
+	background-color: #d63939;
 	color: #FFF
 }
 
 .lobibox-notify.lobibox-notify-error:hover {
-	background-color: #f73757;
+	background-color: #d63939;
 	border-color: #FFF
 }
 

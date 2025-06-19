@@ -1501,6 +1501,31 @@ ul.categories-list li {
     text-decoration: underline !important;
 }
 
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: #adb5bd;
+    border-radius: 10px;
+    border: 1px solid transparent;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background-color: #6c757d;
+}
+
+/* ---------- Scrollbar cho Firefox ---------- */
+* {
+    scrollbar-width: thin;
+    scrollbar-color: #adb5bd transparent;
+}
+
 /* Responsive */
 
 @media screen and (max-width: 1200px) {
