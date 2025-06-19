@@ -3,6 +3,7 @@
 use App\Http\Controllers\Backend\AuthController;
 use App\Http\Controllers\Backend\BirthDayController;
 use App\Http\Controllers\Backend\BulkActionController;
+use App\Http\Controllers\Backend\CategoryController;
 use App\Http\Controllers\Backend\ContractTypeController;
 use App\Http\Controllers\Backend\DashboardController;
 use App\Http\Controllers\Backend\EmployeeController;
@@ -53,6 +54,14 @@ Route::middleware('admin.auth')->group(function () {
         Route::put('/{id}', 'update')->name('update');
         Route::delete('/{id}', 'destroy')->name('destroy');
     });
+
+
+    Route::group(['prefix' => 'categorys', 'controller' => CategoryController::class, 'as' => 'categorys.'], function () {
+        Route::get('/', 'index')->name('index');
+        Route::post('/update-or-create', 'updateOrCreateOrDelete')->name('updateOrCreate');
+    });
+
+
 });
 
 
