@@ -11,8 +11,19 @@ class Textarea extends Component
     /**
      * Create a new component instance.
      */
-    public function __construct()
-    {
+    public function __construct(
+        public $id              = null,
+        public $name            = null,
+        public $class           = '',
+        public $placeholder     = null,
+        public $value           = '',
+        public $disabled        = false,
+        public $readonly        = false,
+        public $label           = "",
+        public $rows           = "",
+        public $required      = false,
+        public $maxLength = ""
+    ) {
         //
     }
 

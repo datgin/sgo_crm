@@ -18,10 +18,8 @@ class Input extends Component
         public $class           = '',
         public $placeholder     = null,
         public $value           = '',
-        public $message         = '',
         public $disabled        = false,
         public $readonly        = false,
-        public $rows            = 5,
         public $label           = "",
         public $required      = false
     ) {

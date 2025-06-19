@@ -48,8 +48,9 @@ class EmployeeController extends Controller
                     ->addColumn('full_name_code', fn($row) => $row->nameCode)
                     ->addColumn('seniority', fn($row) => $row->seniority)
                     ->editColumn('created_at', fn($row) => $row->created_at->format('d-m-Y'))
+                    ->editColumn('status', fn($row) => view('components.switch-checkbox', ['checked' => $row->status, 'id' => $row->id])->render())
                     ->editColumn('operations', fn($row) => view('components.operation', ['row' => $row])->render()),
-                ['days_left_for_university', 'contract_link']
+                ['days_left_for_university', 'contract_link', 'status']
 
             );
         }
@@ -156,6 +157,8 @@ class EmployeeController extends Controller
 
             $credentials['code'] ??= $this->generateEmployeeCode();
 
+            $credentials['password'] = bcrypt($credentials['password']);
+
             if ($request->hasFile('avatar')) {
                 $uploadAvatar = uploadImages('avatar', 'employee');
                 $credentials['avatar'] = $uploadAvatar;
@@ -179,6 +182,10 @@ class EmployeeController extends Controller
             $credentials = $request->validated();
 
             $credentials['code'] ??= $this->generateEmployeeCode();
+
+            if (!empty($credentials['password'])) {
+                $credentials['password'] = bcrypt($credentials['password']);
+            }
 
             if ($request->hasFile('avatar')) {
                 $uploadAvatar = uploadImages('avatar', 'employee');

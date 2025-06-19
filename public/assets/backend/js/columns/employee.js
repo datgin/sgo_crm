@@ -1,12 +1,12 @@
 const columns = [
-    {
-        data: "full_name_code",
-        name: "full_name_code",
-        title: "",
-        orderable: false,
-        searchable: false,
-        width: "5%",
-    },
+    // {
+    //     data: "full_name_code",
+    //     name: "full_name_code",
+    //     title: "",
+    //     orderable: false,
+    //     searchable: false,
+    //     width: "5%",
+    // },
     {
         data: "DT_RowIndex",
         name: "DT_RowIndex",
@@ -46,6 +46,12 @@ const columns = [
         data: "phone",
         name: "phone",
         title: "Số điện thoại",
+    },
+    {
+        data: "email",
+        name: "email",
+        title: "Email",
+        orderable: false,
     },
     {
         data: "address",
@@ -194,6 +200,14 @@ const columns = [
         render: function (data) {
             return data ?? '<span class="text-muted">NA</span>';
         },
+        orderable: false,
+        searchable: false,
+    },
+    {
+        data: "status",
+        name: "status",
+        title: "Trạng thái",
+        class: "text-center",
         orderable: false,
         searchable: false,
     },

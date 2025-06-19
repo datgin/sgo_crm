@@ -30,6 +30,16 @@
                             </div>
 
                             <div class="col-md-6">
+                                <x-input type="email" name="email" id="email" label="Email" required="true"
+                                    value="{{ $employee->email ?? '' }}" />
+                            </div>
+
+                            <div class="col-md-6">
+                                <x-input type="password" name="password" id="password"
+                                    label="Mật khẩu mới (bỏ qua nếu không đổi)" placeholder="Mật khẩu" />
+                            </div>
+
+                            <div class="col-md-6">
                                 <x-input name="phone" id="phone" label="Số điện thoại"
                                     value="{{ $employee->phone ?? '' }}" />
                             </div>
@@ -112,11 +122,11 @@
                 </x-card>
 
                 <x-card title="Ghi chú">
-                    <x-input name="notes" :value="$employee->notes ?? ''" placeholder="Ghi chú" id="notes" type="textarea" />
+                    <x-textarea name="notes" :value="$employee->notes ?? ''" placeholder="Ghi chú" id="notes" />
                 </x-card>
 
-                <x-card title="Media">
-                    <x-media name="gallery" :multiple="false" />
+                <x-card title="Trạng thái">
+                    <x-switch-checkbox :checked="$employee->status ?? false" />
                 </x-card>
             </div>
         </div>
@@ -129,6 +139,8 @@
             formValidator.set({
                 code: "nullable|max:50",
                 full_name: 'required|max:255',
+                email: 'required|email|max:255',
+                password: `{{ isset($employee) ? 'nullable' : 'required' }}|min:8|max:255|regex:^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[\\W_]).{8,}$`,
                 phone: 'nullable|regex:^0\\d{9}$',
                 address: 'nullable|max:255',
                 birthday: 'nullable|date_format:d-m-Y|before_today',
@@ -162,6 +174,18 @@
                 resignation_date: "Ngày nghỉ việc",
                 notes: "Ghi chú",
                 avatar: "Ảnh đại diện"
+            });
+
+            $(document).on('click', '.toggle-password', function() {
+                const input = $($(this).attr('toggle'));
+                console.log(input);
+
+                const type = input.attr('type') === 'password' ? 'text' : 'password';
+                input.attr('type', type);
+
+                // Thay đổi icon
+                $(this).html(type === 'password' ? '<i class="far fa-eye"></i>' :
+                    '<i class="far fa-eye-slash"></i>');
             });
 
             submitForm("#myForm", function(response) {
