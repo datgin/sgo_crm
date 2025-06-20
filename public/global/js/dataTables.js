@@ -150,7 +150,7 @@ const dataTables = (
             <select class="form-select form-select-sm" id="bulkAction">
                 <option value="">-- Chọn hành động --</option>
                 <option value="delete">Xóa đã chọn</option>
-                <option value="change-status">Khóa tài khoản</option>
+                <option value="change-status">Thay đổi trạng thái</option>
             </select>
         </div>
         `;
@@ -250,7 +250,7 @@ const initBulkAction = (modelName) => {
             confirmText = "Bạn có chắc chắn muốn xóa các mục đã chọn?";
             confirmButton = "Xóa";
         } else if (action === "change-status") {
-            confirmText = "Bạn có chắc chắn muốn khóa các tài khoản đã chọn?";
+            confirmText = "Bạn có chắc chắn muốn thay đổi trạng thái đã chọn?";
             confirmButton = "Khóa";
         }
 
@@ -272,11 +272,11 @@ const initBulkAction = (modelName) => {
                         ids: ids,
                     },
                     success: function (res) {
+                        $("#checkedAll, .row-checkbox").prop("checked", false);
                         $("table").DataTable().ajax.reload();
                         datgin.success(res.message);
                         $("#bulkAction").val("");
                         $("#actionBox").addClass("d-none");
-                        $("#checkedAll").prop("checked", false);
                     },
                     error: function (xhr) {
                         datgin.error(

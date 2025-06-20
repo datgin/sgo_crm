@@ -16,6 +16,8 @@ class File extends Component
         public string $accept = 'image/*',
         public bool $multiple = false,
         public ?string $value = "",
+        public string $width = "150px",
+        public string $height = "200px",
     ) {}
 
     /**

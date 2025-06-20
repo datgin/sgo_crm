@@ -26,7 +26,6 @@ class AuthController extends Controller
             'password' => 'mật khẩu'
         ]);
 
-
         return transaction(function () use ($request) {
             $credentials = $request->only('email', 'password');
             $remember = $request->boolean('remember');
@@ -39,5 +38,12 @@ class AuthController extends Controller
 
             return errorResponse("Mật khẩu không chính xác!", 400, true);
         });
+    }
+
+    public function logout(Request $request)
+    {
+        Auth::guard('admin')->logout();
+        $request->session()->flush();
+        return redirect()->route('login');
     }
 }

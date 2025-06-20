@@ -11,7 +11,6 @@ class Employee extends Model
 {
     use HasFactory, HasRoles;
 
-
     protected $fillable = [
         'position_id',
         'department_id',
@@ -20,7 +19,6 @@ class Employee extends Model
         'code',
         'full_name',
         'email',
-        'password',
         'avatar',
         'phone',
         'address',

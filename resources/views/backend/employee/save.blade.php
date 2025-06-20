@@ -36,7 +36,8 @@
 
                             <div class="col-md-6">
                                 <x-input type="password" name="password" id="password"
-                                    label="Mật khẩu mới (bỏ qua nếu không đổi)" placeholder="Mật khẩu" />
+                                    label="Mật khẩu {{ $employee ? 'mới (bỏ qua nếu không đổi)' : '' }}"
+                                    placeholder="Mật khẩu" />
                             </div>
 
                             <div class="col-md-6">
@@ -102,7 +103,47 @@
                                         ? $employee->resignation_date->format('d-m-Y')
                                         : ''" />
                             </div>
+
+                            <div class="col-md-6">
+                                <x-select label="Loại hợp động" name="contract_type_id" :options="$contractTypes" />
+                            </div>
+
+                            <div class="col-md-6">
+                                <x-input name="cccd" id="cccd" label="Mức lương" value="" />
+                            </div>
+
+                            <div class="col-md-6">
+                                <x-date name="start_date" id="start_date" label="Ngày bắt đầu hợp đồng" />
+                            </div>
+
+                            <div class="col-md-6">
+                                <x-date name="end_date" id="end_date" label="Ngày kết thúc hợp đồng" />
+                            </div>
+
+                            <div class="col-md-12">
+                                <label for="" class="form-label fw-medium required">
+                                    Tải hợp đồng file (PDF)
+                                </label>
+
+                                <div class="input-group">
+                                    <label for="fileInput" class="btn btn-outline-primary">
+                                        <i class="fas fa-file-upload"></i> Chọn tệp
+                                    </label>
+                                    <input type="file" name="file_url" id="fileInput" class="d-none" accept=".pdf">
+                                    <input type="text" id="fileName" class="form-control"
+                                        placeholder="Chưa chọn file nào" readonly>
+                                </div>
+                            </div>
                         </div>
+                    </div>
+                </div>
+
+                <div class="card" id="previewArea" style="display: none;">
+                    <div class="card-header">
+                        <h4 class="card-title fs-6 fw-medium">Xem trước tài liệu</h4>
+                    </div>
+                    <div class="card-body">
+                        <iframe src="" id="filePreview" width="100%" height="600px" frameborder="0"></iframe>
                     </div>
                 </div>
             </div>
@@ -112,7 +153,7 @@
 
                 <x-submit />
 
-                <x-card title="Ảnh 3x4" class="text-center">
+                <x-card title="Ảnh 3x4">
                     <x-file name="avatar" :value="$employee->avatar ?? showImage('')" />
                 </x-card>
 
@@ -155,7 +196,7 @@
                 employment_status_id: 'required',
                 resignation_date: 'nullable|date_format:d-m-Y|after_or_equal:birthday',
                 notes: 'nullable|max:1000',
-                avatar: "required|file|mimes:jpeg,png,jpg,webp|max_size:2048"
+                avatar: "{{ isset($employee) ? 'nullable' : 'required' }}|file|mimes:jpeg,png,jpg,webp|max_size:2048"
             }, {
                 code: "Mã nhân viên",
                 full_name: "Họ tên",
@@ -190,6 +231,33 @@
 
             submitForm("#myForm", function(response) {
                 window.location.href = response.data.redirect
+            });
+
+            $('#fileInput').on('change', function(e) {
+                const file = e.target.files[0];
+                const preview = $('#filePreview');
+
+                if (file) {
+
+                    $('#fileName').val(file.name);
+
+                    const fileType = file.type;
+                    const fileName = file.name.toLowerCase();
+                    const blobURL = URL.createObjectURL(file);
+
+                    if (fileType === 'application/pdf' || fileName.endsWith('.pdf')) {
+                        preview.attr('src', blobURL);
+                        $('#previewArea').show();
+                    } else if (fileName.endsWith('.docx')) {
+                        alert(
+                            "DOCX không thể xem trực tiếp — cần upload lên server để dùng Google Docs Viewer."
+                        );
+                        $('#previewArea').hide();
+                    } else {
+                        alert('Chỉ hỗ trợ file PDF hoặc DOCX.');
+                        $('#previewArea').hide();
+                    }
+                }
             });
         })
     </script>

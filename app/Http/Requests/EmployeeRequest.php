@@ -39,6 +39,7 @@ class EmployeeRequest extends FormRequest
             'position_id' => ['required', 'exists:positions,id'],
             'department_id' => ['required', 'exists:departments,id'],
             'education_level_id' => ['required', 'exists:education_levels,id'],
+            'contract_type_id' => ['required', 'exists:contract_types,id'],
             'resignation_date' => ['nullable', 'date', 'after_or_equal:birthday'],
             'employment_status_id' => ['required', 'exists:employment_statuses,id'],
             'notes' => ['nullable', 'string', 'max:1000'],

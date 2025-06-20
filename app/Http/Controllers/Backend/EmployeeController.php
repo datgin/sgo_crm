@@ -5,11 +5,13 @@ namespace App\Http\Controllers\Backend;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\EmployeeRequest;
 use App\Http\Resources\Employee\EmployeeCollection;
+use App\Models\ContractType;
 use App\Models\Department;
 use App\Models\EducationLevel;
 use App\Models\Employee;
 use App\Models\EmploymentStatus;
 use App\Models\Position;
+use App\Models\User;
 use App\Traits\DataTables;
 use App\Traits\QueryBuilder;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -57,7 +59,6 @@ class EmployeeController extends Controller
 
         return view('backend.employee.index');
     }
-
 
     public function view($id, Request $request)
     {
@@ -129,7 +130,6 @@ class EmployeeController extends Controller
 
         return view('backend.employee.information', compact('departments', 'employees', 'activeEmployeeCount'));
     }
-
     public function save(?string $id = null)
     {
 
@@ -140,13 +140,14 @@ class EmployeeController extends Controller
         $departments = Department::query()->pluck('name', 'id')->toArray();
         $educationLevels = EducationLevel::query()->pluck('name', 'id')->toArray();
         $employeeStatuses = EmploymentStatus::query()->pluck('name', 'id')->toArray();
+        $contractTypes = ContractType::query()->pluck('name', 'id')->toArray();
 
         if (!empty($id)) {
             $employee   = Employee::query()->findOrFail($id);
             $title      = "Chỉnh sửa nhân viên - {$employee->full_name}";
         }
 
-        return view('backend.employee.save', compact('title', 'employee', 'positions', 'departments', 'educationLevels', 'employeeStatuses'));
+        return view('backend.employee.save', compact('title', 'employee', 'positions', 'departments', 'educationLevels', 'employeeStatuses', 'contractTypes'));
     }
 
     public function store(EmployeeRequest $request)
@@ -164,7 +165,15 @@ class EmployeeController extends Controller
                 $credentials['avatar'] = $uploadAvatar;
             }
 
-            Employee::query()->create($credentials);
+            $employee = Employee::query()->create($credentials);
+
+            User::create([
+                'name' => $employee->full_name,
+                'email' => $employee->email,
+                'avatar' => $uploadAvatar,
+                'phone' => $employee->phone,
+                'password' => $credentials['password'],
+            ]);
 
             return successResponse("Tạo nhân viên thành công", ['redirect' => '/employees']);
         }, function () use ($uploadAvatar) {
@@ -177,23 +186,43 @@ class EmployeeController extends Controller
         $uploadAvatar = null;
         $employee = Employee::query()->findOrFail($id);
         $oldAvatar = $employee->getRawOriginal('avatar');
+        $email = $employee->email;
 
-        return transaction(function () use ($request, &$uploadAvatar, $id, $oldAvatar, $employee) {
+        return transaction(function () use ($request, &$uploadAvatar, $oldAvatar, $employee, $email) {
             $credentials = $request->validated();
 
             $credentials['code'] ??= $this->generateEmployeeCode();
 
+            // Hash password nếu có
             if (!empty($credentials['password'])) {
                 $credentials['password'] = bcrypt($credentials['password']);
+            } else {
+                unset($credentials['password']); // Không cập nhật nếu không có
             }
 
+            // Upload avatar nếu có
             if ($request->hasFile('avatar')) {
                 $uploadAvatar = uploadImages('avatar', 'employee');
                 $credentials['avatar'] = $uploadAvatar;
             }
+
+            // Cập nhật nhân viên
             $employee->update($credentials);
 
-            if (!empty($uploadAvatar)) deleteImage($oldAvatar);
+            // Cập nhật user liên kết (nếu có), không tạo mới
+            $user = User::where('email', $email)->first();
+            if ($user) {
+                $user->update([
+                    'name' => $employee->full_name,
+                    'email' => $employee->email,
+                    'avatar' => $uploadAvatar ?? $oldAvatar,
+                    'phone' => $employee->phone,
+                ] + ($request->filled('password') ? ['password' => bcrypt($request->input('password'))] : []));
+            }
+
+            if (!empty($uploadAvatar)) {
+                deleteImage($oldAvatar);
+            }
 
             return successResponse("Lưu thay đổi thành công", ['redirect' => '/employees']);
         }, function () use ($uploadAvatar) {

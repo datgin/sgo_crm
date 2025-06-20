@@ -1,7 +1,7 @@
 @extends('backend.layouts.app')
 
 @section('content')
-    <x-breadcrumb />
+    <x-breadcrumb :breadcrumbs="[['label' => 'Nhân viên']]" />
 
     <x-page-header title="Danh sách nhân viên">
         <a href="/employees/save" class="btn btn-primary">

@@ -5,7 +5,7 @@
 <div class="upload-wrapper">
     <label for="{{ $uid }}" class="upload-label d-block position-relative" style="cursor: pointer">
         <img src="{{ $value }}" alt="Preview" class="preview-image"
-            style="width: 150px; height: 200px; object-fit: cover; border: 1px solid #ccc;">
+            style="width: {{ $width }}; height: {{ $height }}; object-fit: cover; border: 1px solid #ccc;">
         <input type="file" id="{{ $uid }}" name="{{ $multiple ? $name . '[]' : $name }}"
             {{ $multiple ? 'multiple' : '' }} class="d-none" accept="{{ $accept }}">
         <small class="text-danger error-message {{ $name }}"></small>

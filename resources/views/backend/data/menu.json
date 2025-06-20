@@ -35,6 +35,11 @@
         "active": false,
         "children": [
             {
+                "title": "Cấu hình chung",
+                "url": "/settings",
+                "active": false
+            },
+            {
                 "title": "Loại hợp đồng",
                 "url": "/contactTypes",
                 "active": false

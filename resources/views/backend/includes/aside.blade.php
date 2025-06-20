@@ -1,10 +1,5 @@
 <div class="sidebar-header">
-    <div>
-        <img src="assets/images/logo-icon-2.png" class="logo-icon" alt="logo icon" />
-    </div>
-    <div>
-        <h4 class="logo-text">Fobia</h4>
-    </div>
+    <img src="{{ showImage($setting->logo) }}" class="logo-icon" alt="logo icon" />
 </div>
 <!--navigation-->
 @php

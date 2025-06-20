@@ -8,6 +8,7 @@ use App\Http\Controllers\Backend\ContractTypeController;
 use App\Http\Controllers\Backend\DashboardController;
 use App\Http\Controllers\Backend\EmployeeController;
 use App\Http\Controllers\Backend\MediaItemController;
+use App\Http\Controllers\Backend\SettingController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -26,6 +27,8 @@ Route::middleware('admin.auth')->group(function () {
     Route::get('/', [DashboardController::class, 'dashboard'])->name('dashboard');
 
     Route::post('handle-bulk-action', [BulkActionController::class, 'handleBulkAction']);
+
+    Route::get('logout', [AuthController::class, 'logout']);
 
     Route::group(['prefix' => 'employees', 'controller' => EmployeeController::class, 'as' => 'employees.'], function () {
         Route::get('/', 'index');
@@ -61,7 +64,10 @@ Route::middleware('admin.auth')->group(function () {
         Route::post('/update-or-create', 'updateOrCreateOrDelete')->name('updateOrCreate');
     });
 
-
+    Route::group(['prefix' => 'settings', 'controller' => SettingController::class], function () {
+        Route::get('/', 'index');
+        Route::post('/', 'save');
+    });
 });
 
 
