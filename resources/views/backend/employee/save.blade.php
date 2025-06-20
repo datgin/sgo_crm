@@ -105,7 +105,9 @@
                             </div>
 
                             <div class="col-md-6">
-                                <x-select label="Loại hợp động" name="contract_type_id" :value="$employee->latestContract->contract_type_id"
+                                <x-select label="Loại hợp động" name="contract_type_id" :value="$employee && $employee->latestContract
+                                    ? $employee->latestContract->contract_type_id
+                                    : ''"
                                     :options="$contractTypes" />
                             </div>
 
@@ -140,7 +142,7 @@
                                     </label>
                                     <input type="file" name="file_url" id="fileInput" class="d-none" accept=".pdf">
                                     <input type="text" id="fileName" class="form-control"
-                                        placeholder="{{ $employee->latestContract ? basename($employee->latestContract->file_url) : 'Chưa chọn file nào ' }}"
+                                        placeholder="{{ $employee && $employee->latestContract ? basename($employee->latestContract->file_url) : 'Chưa chọn file nào ' }}"
                                         readonly>
                                 </div>
                             </div>
@@ -148,7 +150,7 @@
                     </div>
                 </div>
 
-                <div class="card" id="previewArea" style="{{ $employee->latestContract ? '' : 'display: none;' }}">
+                <div class="card" id="previewArea" style="{{$employee && $employee->latestContract ? '' : 'display: none;' }}">
                     <div class="card-header">
                         <h4 class="card-title fs-6 fw-medium">Xem trước tài liệu</h4>
                     </div>
@@ -179,7 +181,7 @@
                 </x-card>
 
                 <x-card title="Trạng thái">
-                    <x-switch-checkbox :checked="$employee->status ?? false" />
+                    <x-switch-checkbox :checked="$employee->status ?? true" />
                 </x-card>
             </div>
         </div>
