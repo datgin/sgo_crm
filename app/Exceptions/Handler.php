@@ -5,6 +5,9 @@ namespace App\Exceptions;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 use Throwable;
 
 class Handler extends ExceptionHandler
@@ -61,6 +64,22 @@ class Handler extends ExceptionHandler
             }
 
             return parent::render($request, $exception);
+        }
+
+        if ($exception instanceof ModelNotFoundException) {
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'message' => 'Dữ liệu không tồn tại.',
+                ], Response::HTTP_NOT_FOUND); // 404
+            }
+        }
+
+        if ($exception instanceof HttpException && $exception->getStatusCode() === 403) {
+            if ($request->expectsJson() || $request->ajax()) {
+                return response()->view('errors.403', [], 403);
+            }
+
+            return response()->view('errors.403', [], 403);
         }
 
         // ✅ Bổ sung dòng này

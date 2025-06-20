@@ -46,8 +46,8 @@ function submitForm(formId, successCallback, url = null, errorCallback = null) {
             data: formData,
             processData: false,
             contentType: false,
-            beforeSend: function () {
-                $("#loadingSpinner").fadeIn();
+            beforeSend: () => {
+                $("#loadingOverlay").show();
             },
             success: function (response) {
                 if (typeof successCallback === "function") {
@@ -75,7 +75,7 @@ function submitForm(formId, successCallback, url = null, errorCallback = null) {
                 );
             },
             complete: function () {
-                $("#loadingSpinner").fadeOut();
+                $("#loadingOverlay").hide();
                 $btn.prop("disabled", false).html(originalText);
             },
         });

@@ -5,11 +5,10 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
-use Spatie\Permission\Traits\HasRoles;
 
 class Employee extends Model
 {
-    use HasFactory, HasRoles;
+    use HasFactory;
 
     protected $fillable = [
         'position_id',
@@ -72,11 +71,6 @@ class Employee extends Model
         'status' => 'boolean'
     ];
 
-    public function getNameCodeAttribute()
-    {
-        return "$this->full_name - $this->code";
-    }
-
     public function getAgeAttribute()
     {
         if (!$this->birthday) {
@@ -84,22 +78,6 @@ class Employee extends Model
         }
 
         return Carbon::now()->diffInYears(Carbon::parse($this->birthday));
-    }
-
-    public function getDaysLeftForUniversityAttribute(): ?string
-    {
-        if (!$this->university_end_date) {
-            return null; // hoặc trả "Chưa cập nhật"
-        }
-
-        $endDate = Carbon::parse($this->university_end_date);
-        $now = Carbon::now();
-
-        if ($endDate->isPast()) {
-            return "Đã kết thúc";
-        }
-
-        return $now->diffInDays($endDate) . ' ngày';
     }
 
     public function getSeniorityAttribute(): string

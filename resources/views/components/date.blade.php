@@ -9,7 +9,7 @@
 
 <small class="text-danger error-message {{ $name }}"></small>
 
-@push('scripts')
+@pushOnce('scripts')
     <script>
         $(function() {
             const isSingle = @json($single);
@@ -53,4 +53,4 @@
             });
         });
     </script>
-@endpush
+@endPushOnce

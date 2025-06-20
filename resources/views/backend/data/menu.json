@@ -2,54 +2,50 @@
     {
         "title": "Tổng quan",
         "icon": "fas fa-chart-line",
-        "url": "/",
-        "active": false
+        "url": "/"
     },
     {
         "title": "Nhân sự",
         "icon": "fas fa-users",
         "url": "javascript:void(0)",
-        "active": false,
         "children": [
             {
                 "title": "Quản lý nhân sự",
-                "url": "/employees",
-                "active": false
-            },
-            {
-                "title": "Sinh nhật",
-                "url": "/birthdays",
-                "active": false
+                "url": "/employees"
             },
             {
                 "title": "Thông tin nhân sự",
-                "url": "/employees/information",
-                "active": false
+                "url": "/employees/information"
+            },
+            {
+                "title": "Sinh nhật",
+                "url": "/birthdays"
             }
-        ]
+        ],
+        "active": ["/employees/save"]
     },
     {
         "title": "Cấu hình",
         "icon": "fas fa-cog",
         "url": "javascript:void(0)",
-        "active": false,
         "children": [
             {
                 "title": "Cấu hình chung",
-                "url": "/settings",
-                "active": false
+                "url": "/settings"
             },
             {
                 "title": "Loại hợp đồng",
-                "url": "/contactTypes",
-                "active": false
+                "url": "/contactTypes"
             },
             {
                 "title": "Hạng mục",
-                "url": "/categorys",
-                "active": false
+                "url": "/categorys"
             }
-
         ]
+    },
+    {
+        "title": "Quyền hạn",
+        "icon": "fas fa-user-shield",
+        "url": "/permissions"
     }
 ]
