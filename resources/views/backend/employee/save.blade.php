@@ -105,23 +105,32 @@
                             </div>
 
                             <div class="col-md-6">
-                                <x-select label="Loại hợp động" name="contract_type_id" :options="$contractTypes" />
+                                <x-select label="Loại hợp động" name="contract_type_id" :value="$employee->latestContract->contract_type_id"
+                                    :options="$contractTypes" />
                             </div>
 
                             <div class="col-md-6">
-                                <x-input name="cccd" id="cccd" label="Mức lương" value="" />
+                                <x-input name="salary" id="salary" class="format-price" label="Mức lương"
+                                    value="{{ formatPrice($employee->latestContract?->salary ?? '') }}" />
                             </div>
 
                             <div class="col-md-6">
-                                <x-date name="start_date" id="start_date" label="Ngày bắt đầu hợp đồng" />
+                                <x-date name="start_date" id="start_date" label="Ngày bắt đầu hợp đồng"
+                                    :value="$employee &&
+                                    $employee->latestContract &&
+                                    $employee->latestContract->start_date
+                                        ? $employee->latestContract->start_date->format('d-m-Y')
+                                        : ''" />
                             </div>
 
                             <div class="col-md-6">
-                                <x-date name="end_date" id="end_date" label="Ngày kết thúc hợp đồng" />
+                                <x-date name="end_date" id="end_date" label="Ngày kết thúc hợp đồng" :value="$employee && $employee->latestContract && $employee->latestContract->end_date
+                                    ? $employee->latestContract->end_date->format('d-m-Y')
+                                    : ''" />
                             </div>
 
                             <div class="col-md-12">
-                                <label for="" class="form-label fw-medium required">
+                                <label for="fileName" class="form-label fw-medium required">
                                     Tải hợp đồng file (PDF)
                                 </label>
 
@@ -131,19 +140,22 @@
                                     </label>
                                     <input type="file" name="file_url" id="fileInput" class="d-none" accept=".pdf">
                                     <input type="text" id="fileName" class="form-control"
-                                        placeholder="Chưa chọn file nào" readonly>
+                                        placeholder="{{ $employee->latestContract ? basename($employee->latestContract->file_url) : 'Chưa chọn file nào ' }}"
+                                        readonly>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="card" id="previewArea" style="display: none;">
+                <div class="card" id="previewArea" style="{{ $employee->latestContract ? '' : 'display: none;' }}">
                     <div class="card-header">
                         <h4 class="card-title fs-6 fw-medium">Xem trước tài liệu</h4>
                     </div>
                     <div class="card-body">
-                        <iframe src="" id="filePreview" width="100%" height="600px" frameborder="0"></iframe>
+                        <iframe
+                            src="{{ $employee && $employee->latestContract && $employee->latestContract->file_url ? showImage($employee->latestContract->file_url) : '' }}"
+                            id="filePreview" width="100%" height="600px" frameborder="0"></iframe>
                     </div>
                 </div>
             </div>
@@ -153,7 +165,7 @@
 
                 <x-submit />
 
-                <x-card title="Ảnh 3x4">
+                <x-card title="Ảnh 3x4" class="text-center">
                     <x-file name="avatar" :value="$employee->avatar ?? showImage('')" />
                 </x-card>
 
@@ -177,45 +189,45 @@
 @push('scripts')
     <script>
         $(function() {
-            formValidator.set({
-                code: "nullable|max:50",
-                full_name: 'required|max:255',
-                email: 'required|email|max:255',
-                password: `{{ isset($employee) ? 'nullable' : 'required' }}|min:8|max:255|regex:^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[\\W_]).{8,}$`,
-                phone: 'nullable|regex:^0\\d{9}$',
-                address: 'nullable|max:255',
-                birthday: 'nullable|date_format:d-m-Y|before_today',
-                gender: 'required|in:male,female,other',
-                cccd: 'nullable|numeric|digits_between:9,12',
-                cccd_issued_date: 'nullable|date_format:d-m-Y|before_or_equal:today',
-                university_start_date: 'nullable|date_format:d-m-Y',
-                university_end_date: 'nullable|date_format:d-m-Y|after_or_equal:university_start_date',
-                position_id: 'required',
-                department_id: 'required',
-                education_level_id: 'required',
-                employment_status_id: 'required',
-                resignation_date: 'nullable|date_format:d-m-Y|after_or_equal:birthday',
-                notes: 'nullable|max:1000',
-                avatar: "{{ isset($employee) ? 'nullable' : 'required' }}|file|mimes:jpeg,png,jpg,webp|max_size:2048"
-            }, {
-                code: "Mã nhân viên",
-                full_name: "Họ tên",
-                phone: "Số điện thoại",
-                address: "Địa chỉ",
-                birthday: "Ngày sinh",
-                gender: "Giới tính",
-                cccd: "Số CCCD",
-                cccd_issued_date: "Ngày cấp CCCD",
-                university_start_date: "Ngày bắt đầu đại học",
-                university_end_date: "Ngày kết thúc đại học",
-                position_id: "Vị trí",
-                department_id: "Phòng ban",
-                education_level_id: "Trình độ học vấn",
-                employment_status_id: "Tình trạng làm việc",
-                resignation_date: "Ngày nghỉ việc",
-                notes: "Ghi chú",
-                avatar: "Ảnh đại diện"
-            });
+            // formValidator.set({
+            //     code: "nullable|max:50",
+            //     full_name: 'required|max:255',
+            //     email: 'required|email|max:255',
+            //     password: `{{ isset($employee) ? 'nullable' : 'required' }}|min:8|max:255|regex:^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[\\W_]).{8,}$`,
+            //     phone: 'nullable|regex:^0\\d{9}$',
+            //     address: 'nullable|max:255',
+            //     birthday: 'nullable|date_format:d-m-Y|before_today',
+            //     gender: 'required|in:male,female,other',
+            //     cccd: 'nullable|numeric|digits_between:9,12',
+            //     cccd_issued_date: 'nullable|date_format:d-m-Y|before_or_equal:today',
+            //     university_start_date: 'nullable|date_format:d-m-Y',
+            //     university_end_date: 'nullable|date_format:d-m-Y|after_or_equal:university_start_date',
+            //     position_id: 'required',
+            //     department_id: 'required',
+            //     education_level_id: 'required',
+            //     employment_status_id: 'required',
+            //     resignation_date: 'nullable|date_format:d-m-Y|after_or_equal:birthday',
+            //     notes: 'nullable|max:1000',
+            //     avatar: "{{ isset($employee) ? 'nullable' : 'required' }}|file|mimes:jpeg,png,jpg,webp|max_size:2048"
+            // }, {
+            //     code: "Mã nhân viên",
+            //     full_name: "Họ tên",
+            //     phone: "Số điện thoại",
+            //     address: "Địa chỉ",
+            //     birthday: "Ngày sinh",
+            //     gender: "Giới tính",
+            //     cccd: "Số CCCD",
+            //     cccd_issued_date: "Ngày cấp CCCD",
+            //     university_start_date: "Ngày bắt đầu đại học",
+            //     university_end_date: "Ngày kết thúc đại học",
+            //     position_id: "Vị trí",
+            //     department_id: "Phòng ban",
+            //     education_level_id: "Trình độ học vấn",
+            //     employment_status_id: "Tình trạng làm việc",
+            //     resignation_date: "Ngày nghỉ việc",
+            //     notes: "Ghi chú",
+            //     avatar: "Ảnh đại diện"
+            // });
 
             $(document).on('click', '.toggle-password', function() {
                 const input = $($(this).attr('toggle'));

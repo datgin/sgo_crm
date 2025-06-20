@@ -32,7 +32,7 @@ class EmployeeController extends Controller
             $query = $this->queryBuilder(
                 model: new Employee,
                 columns: ['*'],
-                relations: ['position', 'department', 'educationLevel', 'employmentStatus', 'contract.contractType']
+                relations: ['position', 'department', 'educationLevel', 'employmentStatus', 'latestContract.contractType']
             );
 
             return $this->processDataTable(
@@ -41,9 +41,9 @@ class EmployeeController extends Controller
                 $dataTable
                     ->addColumn('position', fn($row) => $row->position ? $row->position->name : 'NA')
                     ->addColumn('education_level', fn($row) => $row->educationLevel ? $row->educationLevel->name : 'NA')
-                    ->addColumn('contract_code', fn($row) => $row->contract ? $row->contract->code : "Không xác định")
-                    ->addColumn('contract_type', fn($row) => $row->contract ? $row->contract->contractType->name : "Không xác định")
-                    ->addColumn('contract_link', fn($row) => $row->contract ? "<a href=''>Hợp đồng lao động</a>" : "Không xác định")
+                    ->addColumn('contract_code', fn($row) => $row->latestContract ? $row->latestContract->code : "Không xác định")
+                    ->addColumn('contract_type', fn($row) => $row->latestContract ? $row->latestContract->contractType->name : "Không xác định")
+                    ->addColumn('contract_link', fn($row) => $row->latestContract ? "<a href=''>Hợp đồng lao động</a>" : "Không xác định")
                     ->addColumn('employment_status', fn($row) => $row->employmentStatus ? $row->employmentStatus->name : 'NA')
                     ->addColumn('age', fn($row) => $row->age ?? 'NA')
                     ->addColumn('days_left_for_university', fn($row) => $row->days_left_for_university ?? '<span class="text-muted">Chưa có</span>')
@@ -143,7 +143,7 @@ class EmployeeController extends Controller
         $contractTypes = ContractType::query()->pluck('name', 'id')->toArray();
 
         if (!empty($id)) {
-            $employee   = Employee::query()->findOrFail($id);
+            $employee   = Employee::query()->with('latestContract')->findOrFail($id);
             $title      = "Chỉnh sửa nhân viên - {$employee->full_name}";
         }
 
@@ -153,20 +153,22 @@ class EmployeeController extends Controller
     public function store(EmployeeRequest $request)
     {
         $uploadAvatar = null;
+
         return transaction(function () use ($request, &$uploadAvatar) {
             $credentials = $request->validated();
-
             $credentials['code'] ??= $this->generateEmployeeCode();
-
             $credentials['password'] = bcrypt($credentials['password']);
 
+            // Upload avatar nếu có
             if ($request->hasFile('avatar')) {
                 $uploadAvatar = uploadImages('avatar', 'employee');
                 $credentials['avatar'] = $uploadAvatar;
             }
 
-            $employee = Employee::query()->create($credentials);
+            // Tạo nhân viên
+            $employee = Employee::create($credentials);
 
+            // Tạo user liên kết
             User::create([
                 'name' => $employee->full_name,
                 'email' => $employee->email,
@@ -175,29 +177,54 @@ class EmployeeController extends Controller
                 'password' => $credentials['password'],
             ]);
 
+            // Thêm hợp đồng nếu có
+            $this->storeOrUpdateContract($employee, $credentials);
+
             return successResponse("Tạo nhân viên thành công", ['redirect' => '/employees']);
         }, function () use ($uploadAvatar) {
             deleteImage($uploadAvatar);
         });
     }
 
+    private function storeOrUpdateContract(Employee $employee, array $credentials)
+    {
+        if (!empty($credentials['contract_type_id'])) {
+            $data = [
+                'contract_type_id' => $credentials['contract_type_id'],
+                'code' => generateUniqueCode('contracts'),
+                'file_url' => uploadPdf('file_url'), // input name = file_pdf
+                'salary' => $credentials['salary'],
+                'start_date' => $credentials['start_date'],
+                'end_date' => $credentials['end_date'],
+            ];
+
+            $latestContract = $employee->latestContract;
+            if ($latestContract) {
+                deleteImage($latestContract->file_url);
+                $latestContract->update($data);
+            } else {
+                $employee->contracts()->create($data);
+            }
+        }
+    }
+
+
     public function update(EmployeeRequest $request, $id)
     {
         $uploadAvatar = null;
-        $employee = Employee::query()->findOrFail($id);
+        $employee = Employee::findOrFail($id);
         $oldAvatar = $employee->getRawOriginal('avatar');
         $email = $employee->email;
 
         return transaction(function () use ($request, &$uploadAvatar, $oldAvatar, $employee, $email) {
             $credentials = $request->validated();
-
             $credentials['code'] ??= $this->generateEmployeeCode();
 
-            // Hash password nếu có
+            // Hash mật khẩu nếu có
             if (!empty($credentials['password'])) {
                 $credentials['password'] = bcrypt($credentials['password']);
             } else {
-                unset($credentials['password']); // Không cập nhật nếu không có
+                unset($credentials['password']);
             }
 
             // Upload avatar nếu có
@@ -209,7 +236,10 @@ class EmployeeController extends Controller
             // Cập nhật nhân viên
             $employee->update($credentials);
 
-            // Cập nhật user liên kết (nếu có), không tạo mới
+            // Cập nhật hoặc thêm mới hợp đồng
+            $this->storeOrUpdateContract($employee, $credentials);
+
+            // Cập nhật user liên kết nếu có
             $user = User::where('email', $email)->first();
             if ($user) {
                 $user->update([
@@ -220,7 +250,7 @@ class EmployeeController extends Controller
                 ] + ($request->filled('password') ? ['password' => bcrypt($request->input('password'))] : []));
             }
 
-            if (!empty($uploadAvatar)) {
+            if ($uploadAvatar) {
                 deleteImage($oldAvatar);
             }
 
@@ -229,6 +259,7 @@ class EmployeeController extends Controller
             deleteImage($uploadAvatar);
         });
     }
+
 
     private function generateEmployeeCode(): string
     {

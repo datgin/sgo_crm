@@ -32,11 +32,12 @@ function submitForm(formId, successCallback, url = null, errorCallback = null) {
 
         const formData = new FormData(this);
 
-        // ✅ Xóa dấu phẩy trong các input có class `usd-price-format`
-        $(".usd-price-format").each(function () {
+        // ✅ Xóa dấu chấm trong các input có class `format-price`
+        $form.find(".format-price").each(function () {
             const name = $(this).attr("name");
-            const rawValue = $(this).val().replace(/,/g, "");
-            formData.set(name, rawValue);
+            if (!name) return; // bỏ qua nếu không có name
+            const raw = $(this).val().replace(/\./g, "");
+            formData.set(name, raw); // Ghi đè vào FormData
         });
 
         $.ajax({
@@ -85,3 +86,23 @@ function formatDate(dateString, format = "DD-MM-YYYY") {
     if (!dateString) return "<span class='text-muted'>NA</span>";
     return dayjs(dateString).format(format);
 }
+
+function formatToVietnameseCurrency(value) {
+    value = value.replace(/[^\d]/g, "");
+    if (value === "") return "";
+    return new Intl.NumberFormat("vi-VN").format(value);
+}
+
+$(document).on("input", ".format-price", function () {
+    let cursorPos = this.selectionStart;
+    let originalLength = this.value.length;
+
+    this.value = formatToVietnameseCurrency(this.value);
+
+    // Giữ lại vị trí con trỏ khi nhập
+    let newLength = this.value.length;
+    this.setSelectionRange(
+        cursorPos + (newLength - originalLength),
+        cursorPos + (newLength - originalLength)
+    );
+});

@@ -14,6 +14,7 @@ class Contract extends Model
         'contract_type_id',
         'code',
         'file_url',
+        'salary',
         'start_date',
         'end_date'
     ];
