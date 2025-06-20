@@ -354,3 +354,20 @@
         });
     </script>
 @endPushOnce
+
+@php
+    $uid = uniqid('media_');
+@endphp
+
+{{-- <div class="media-upload-wrapper" data-name="{{ $name }}" data-multiple="{{ $multiple ? 'true' : 'false' }}"
+    data-selected='@json($selected)' id="{{ $uid }}">
+    <div class="upload-wrapper border border-secondary rounded p-4 bg-light text-center d-flex justify-content-center align-items-center"
+        style="cursor: pointer; min-height: 220px;">
+        <div class="upload-preview d-flex flex-wrap gap-3 justify-content-start align-items-start"></div>
+        <div class="placeholder-text text-muted fs-6">
+            <i class="fas fa-cloud-upload-alt fs-3 d-block"></i>
+            Bấm để chọn ảnh
+        </div>
+    </div>
+    <input type="hidden" name="{{ $name }}" class="selected-images-input" value='@json($selected)'>
+</div> --}}

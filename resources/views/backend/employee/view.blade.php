@@ -8,8 +8,8 @@
 
                 <div class="text-center border-bottom pb-3 mb-4">
                     <h3 class="fw-bold mb-2">THÔNG TIN CHI TIẾT NHÂN SỰ</h3>
-                    <h5 class="mb-1 text-muted text-start">Công ty TNHH ABC</h5>
-                    <h4 class="mb-0 small text-muted text-start">Địa chỉ: 123 đường Ngô Văn Trường Ngõ, Hà Nội</h4>
+                    <h5 class="mb-1 text-muted text-start">{{ $setting->company_name }}</h5>
+                    <h4 class="mb-0 small text-muted text-start">Địa chỉ: {{ $setting->address }}</h4>
                 </div>
 
                 <div class="row mb-4">

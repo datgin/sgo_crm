@@ -69,3 +69,19 @@ if (!function_exists('uploadImages')) {
         return $isArray ? $paths : $paths[0] ?? null;
     }
 }
+
+
+if (!function_exists('uploadPdf')) {
+    function uploadPdf(string $fieldName, string $directory = 'documents'): ?string
+    {
+        $file = request()->file($fieldName);
+
+        if ($file && $file->isValid() && $file->getClientOriginalExtension() === 'pdf') {
+            $filename = time() . uniqid() . '.pdf';
+            $path = $file->storeAs($directory, $filename, 'public');
+            return $path; // Đường dẫn tính từ public disk
+        }
+
+        return null; // Không có file hoặc không hợp lệ
+    }
+}

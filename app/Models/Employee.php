@@ -11,7 +11,6 @@ class Employee extends Model
 {
     use HasFactory, HasRoles;
 
-
     protected $fillable = [
         'position_id',
         'department_id',
@@ -20,7 +19,6 @@ class Employee extends Model
         'code',
         'full_name',
         'email',
-        'password',
         'avatar',
         'phone',
         'address',
@@ -54,9 +52,15 @@ class Employee extends Model
     {
         return $this->belongsTo(EmploymentStatus::class);
     }
-    public function contract()
+
+    public function contracts()
     {
-        return $this->hasOne(Contract::class);
+        return $this->hasMany(Contract::class);
+    }
+
+    public function latestContract()
+    {
+        return $this->hasOne(Contract::class)->latestOfMany();
     }
 
     protected $casts = [
@@ -101,7 +105,7 @@ class Employee extends Model
     public function getSeniorityAttribute(): string
     {
 
-        $contract = $this->contract;
+        $contract = $this->latestContract;
         if (!$contract || !$contract->start_date) {
             return 'Chưa xác định';
         }
@@ -136,7 +140,7 @@ class Employee extends Model
 
     public function getSeniorityDetailAttribute(): string
     {
-        $contract = $this->contract;
+        $contract = $this->latestContract;
         if (!$contract || !$contract->start_date) {
             return 'Chưa xác định';
         }
@@ -168,16 +172,16 @@ class Employee extends Model
 
     public function getStartDateAttribute()
     {
-        return $this->contract && $this->contract->start_date ? $this->contract->start_date->format('d-m-Y') : '<span class="text-muted">Chưa xác định</span>';
+        return $this->latestContract && $this->latestContract->start_date ? $this->latestContract->start_date->format('d-m-Y') : '<span class="text-muted">Chưa xác định</span>';
     }
 
     public function getEndDateAttribute()
     {
-        return $this->contract && $this->contract->end_date ? $this->contract->end_date->format('d-m-Y') : '<span class="text-muted">Chưa xác định</span>';
+        return $this->latestContract && $this->latestContract->end_date ? $this->latestContract->end_date->format('d-m-Y') : '<span class="text-muted">Chưa xác định</span>';
     }
     public function getContractTypeAttribute()
     {
-        return $this->contract && $this->contract->contractType ? $this->contract->contractType->name : '<span class="text-muted">Chưa xác định</span>';
+        return $this->latestContract && $this->latestContract->contractType ? $this->latestContract->contractType->name : '<span class="text-muted">Chưa xác định</span>';
     }
 
     protected static function booted()

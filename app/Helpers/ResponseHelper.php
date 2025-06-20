@@ -32,11 +32,11 @@ if (!function_exists('transaction')) {
 }
 
 if (!function_exists('successResponse')) {
-    function successResponse($message, $data = null, $code = 200, bool $isResponse = true)
+    function successResponse($message, $data = null, $code = 200, bool $isResponse = true, bool $isToastr = true)
     {
         $response = ['success' => true, 'message' => $message, 'data' => $data, 'code' => $code];
 
-        sessionFlash('success', $message);
+        if ($isToastr) sessionFlash('success', $message);
 
         return $isResponse ? response()->json($response, $code) : $response;
     }

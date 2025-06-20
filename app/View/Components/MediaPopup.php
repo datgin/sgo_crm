@@ -6,12 +6,12 @@ use Closure;
 use Illuminate\Contracts\View\View;
 use Illuminate\View\Component;
 
-class Breadcrumb extends Component
+class MediaPopup extends Component
 {
     /**
      * Create a new component instance.
      */
-    public function __construct(public array $breadcrumbs = [])
+    public function __construct()
     {
         //
     }
@@ -21,6 +21,6 @@ class Breadcrumb extends Component
      */
     public function render(): View|Closure|string
     {
-        return view('components.breadcrumb');
+        return view('components.media-popup');
     }
 }
