@@ -1,12 +1,4 @@
 const columns = [
-    // {
-    //     data: "full_name_code",
-    //     name: "full_name_code",
-    //     title: "",
-    //     orderable: false,
-    //     searchable: false,
-    //     width: "5%",
-    // },
     {
         data: "DT_RowIndex",
         name: "DT_RowIndex",
@@ -117,33 +109,6 @@ const columns = [
         data: "education_level",
         name: "education_level",
         title: "Trình độ học vấn",
-        orderable: false,
-        searchable: false,
-    },
-    {
-        data: "university_start_date",
-        name: "university_start_date",
-        title: "Thời gian vào ĐH",
-        render: function (data) {
-            return formatDate(data, "DD-MM-YYYY");
-        },
-        orderable: false,
-        searchable: false,
-    },
-    {
-        data: "university_end_date",
-        name: "university_end_date",
-        title: "Kết thúc ĐH",
-        render: function (data) {
-            return formatDate(data, "DD-MM-YYYY");
-        },
-        orderable: false,
-        searchable: false,
-    },
-    {
-        data: "days_left_for_university",
-        name: "days_left_for_university",
-        title: "Số ngày còn lại của ĐH",
         orderable: false,
         searchable: false,
     },

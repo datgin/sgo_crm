@@ -27,6 +27,7 @@ class EmployeeController extends Controller
 
     public function index(Request $request)
     {
+        $this->authorize('view', User::class);
 
         if ($request->ajax()) {
             $query = $this->queryBuilder(
@@ -43,16 +44,14 @@ class EmployeeController extends Controller
                     ->addColumn('education_level', fn($row) => $row->educationLevel ? $row->educationLevel->name : 'NA')
                     ->addColumn('contract_code', fn($row) => $row->latestContract ? $row->latestContract->code : "Không xác định")
                     ->addColumn('contract_type', fn($row) => $row->latestContract ? $row->latestContract->contractType->name : "Không xác định")
-                    ->addColumn('contract_link', fn($row) => $row->latestContract ? "<a href=''>Hợp đồng lao động</a>" : "Không xác định")
+                    ->addColumn('contract_link', fn($row) => $row->latestContract ? "<a target='_blank' href='" . showImage($row->latestContract->file_url) . "'>Hợp đồng lao động</a>" : "Không xác định")
                     ->addColumn('employment_status', fn($row) => $row->employmentStatus ? $row->employmentStatus->name : 'NA')
                     ->addColumn('age', fn($row) => $row->age ?? 'NA')
-                    ->addColumn('days_left_for_university', fn($row) => $row->days_left_for_university ?? '<span class="text-muted">Chưa có</span>')
-                    ->addColumn('full_name_code', fn($row) => $row->nameCode)
                     ->addColumn('seniority', fn($row) => $row->seniority)
                     ->editColumn('created_at', fn($row) => $row->created_at->format('d-m-Y'))
                     ->editColumn('status', fn($row) => view('components.switch-checkbox', ['checked' => $row->status, 'id' => $row->id])->render())
                     ->editColumn('operations', fn($row) => view('components.operation', ['row' => $row])->render()),
-                ['days_left_for_university', 'contract_link', 'status']
+                ['contract_link', 'status']
 
             );
         }
@@ -62,6 +61,7 @@ class EmployeeController extends Controller
 
     public function view($id, Request $request)
     {
+
         try {
             $employees = Employee::query()->pluck('full_name', 'id')->toArray();
             $employeeId = $request->input('id', $id);
@@ -130,8 +130,10 @@ class EmployeeController extends Controller
 
         return view('backend.employee.information', compact('departments', 'employees', 'activeEmployeeCount'));
     }
+
     public function save(?string $id = null)
     {
+        $this->authorize('create', User::class);
 
         $title          = "Tạo mới nhân viên";
         $employee       = null;
@@ -143,6 +145,8 @@ class EmployeeController extends Controller
         $contractTypes = ContractType::query()->pluck('name', 'id')->toArray();
 
         if (!empty($id)) {
+            $this->authorize('edit', User::class);
+
             $employee   = Employee::query()->with('latestContract')->findOrFail($id);
             $title      = "Chỉnh sửa nhân viên - {$employee->full_name}";
         }
@@ -152,6 +156,8 @@ class EmployeeController extends Controller
 
     public function store(EmployeeRequest $request)
     {
+        $this->authorize('create', User::class);
+
         $uploadAvatar = null;
 
         return transaction(function () use ($request, &$uploadAvatar) {
@@ -211,6 +217,8 @@ class EmployeeController extends Controller
 
     public function update(EmployeeRequest $request, $id)
     {
+        $this->authorize('edit', User::class);
+
         $uploadAvatar = null;
         $employee = Employee::findOrFail($id);
         $oldAvatar = $employee->getRawOriginal('avatar');

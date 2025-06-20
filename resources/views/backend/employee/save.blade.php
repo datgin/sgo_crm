@@ -2,7 +2,13 @@
 
 
 @section('content')
-    <x-breadcrumb />
+    @php
+        $breadcrumbs = [
+            ['label' => 'Nhân viên', 'url' => '/employees'],
+            ['label' => $employee ? "Cập nhật nhân viên - $employee->full_name" : 'Tạo mới nhân viên'],
+        ];
+    @endphp
+    <x-breadcrumb :breadcrumbs="$breadcrumbs" />
 
     <x-page-header :title="$title" />
 
@@ -71,20 +77,6 @@
                             </div>
 
                             <div class="col-md-6">
-                                <x-date name="university_start_date" id="university_start_date" label="Ngày nhập học"
-                                    :value="$employee && $employee->university_start_date
-                                        ? $employee->university_start_date->format('d-m-Y')
-                                        : ''" />
-                            </div>
-
-                            <div class="col-md-6">
-                                <x-date name="university_end_date" id="university_end_date" label="Ngày tốt nghiệp"
-                                    :value="$employee && $employee->university_end_date
-                                        ? $employee->university_end_date->format('d-m-Y')
-                                        : ''" />
-                            </div>
-
-                            <div class="col-md-6">
                                 <x-select label="Chức vụ" :value="$employee->position_id ?? ''" name="position_id" :options="$positions" />
                             </div>
 
@@ -132,7 +124,7 @@
                             </div>
 
                             <div class="col-md-12">
-                                <label for="fileName" class="form-label fw-medium required">
+                                <label for="fileName" class="form-label fw-medium">
                                     Tải hợp đồng file (PDF)
                                 </label>
 
@@ -150,7 +142,8 @@
                     </div>
                 </div>
 
-                <div class="card" id="previewArea" style="{{$employee && $employee->latestContract ? '' : 'display: none;' }}">
+                <div class="card" id="previewArea"
+                    style="{{ $employee && $employee->latestContract ? '' : 'display: none;' }}">
                     <div class="card-header">
                         <h4 class="card-title fs-6 fw-medium">Xem trước tài liệu</h4>
                     </div>

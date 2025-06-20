@@ -8,6 +8,7 @@ use App\Http\Controllers\Backend\ContractTypeController;
 use App\Http\Controllers\Backend\DashboardController;
 use App\Http\Controllers\Backend\EmployeeController;
 use App\Http\Controllers\Backend\MediaItemController;
+use App\Http\Controllers\Backend\PermissionController;
 use App\Http\Controllers\Backend\SettingController;
 use Illuminate\Support\Facades\Route;
 
@@ -37,6 +38,17 @@ Route::middleware('admin.auth')->group(function () {
         Route::put('save/{id}', 'update');
         Route::get('/view/{id}', 'view')->name('view');
         Route::get('/information', 'information')->name('information');
+    });
+
+    Route::group([
+        'prefix' => 'permissions',
+        'controller' => PermissionController::class,
+        'as' => 'permissions.'
+    ], function () {
+        Route::get('/', 'index');
+        Route::get('{id}', 'show');
+        Route::post('/', 'store');
+        Route::put('/', 'update');
     });
 
     Route::group(['prefix' => 'media', 'controller' => MediaItemController::class], function () {
