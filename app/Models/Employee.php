@@ -29,7 +29,8 @@ class Employee extends Model
         'university_end_date',
         'resignation_date',
         'notes',
-        'status'
+        'status',
+        'albums'
     ];
 
     public function position()
@@ -68,7 +69,8 @@ class Employee extends Model
         'university_start_date' => 'date',
         'university_end_date' => 'date',
         'resignation_date' => 'date',
-        'status' => 'boolean'
+        'status' => 'boolean',
+        'albums' => 'array'
     ];
 
     public function getAgeAttribute()

@@ -26,10 +26,6 @@ class EmployeeRequest extends FormRequest
         $id = $this->route('id', null);
         $hasContract = $this->filled('contract_type_id');
 
-        // $this->merge([
-        //     'avatar' => json_decode($this->input('avatar'), true) ?? [],
-        // ]);
-
         return [
             'code' => ['nullable', 'string', 'max:50', "unique:employees,code,{$id}"],
             'full_name' => ['required', 'string', 'max:255'],
@@ -48,7 +44,7 @@ class EmployeeRequest extends FormRequest
             'education_level_id' => ['required', 'exists:education_levels,id'],
 
             'contract_type_id' => ['nullable', 'exists:contract_types,id'],
-            'file_url'         => $id && $hasContract ? ['nullable'] : ['required', 'file', 'mimes:pdf', 'max:10240'],
+            'file_url'         => $id && !$hasContract ? ['nullable'] : ['required', 'file', 'mimes:pdf', 'max:10240'],
             'start_date'       => $hasContract ? ['required', 'date_format:d-m-Y'] : ['nullable'],
             'end_date'         => $hasContract ? ['required', 'date_format:d-m-Y', 'after_or_equal:start_date'] : ['nullable'],
             'salary'           => $hasContract ? ['required', 'numeric', 'min:0'] : ['nullable'],
@@ -57,7 +53,8 @@ class EmployeeRequest extends FormRequest
             'employment_status_id' => ['required', 'exists:employment_statuses,id'],
             'notes' => ['nullable', 'string', 'max:1000'],
             'avatar' => ['nullable', 'url'],
-            // 'avatar' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp', 'max:5120'], // 5MB
+            'albums' => ['nullable', 'array'],
+            'albums.*' => ['url'],
         ];
     }
 
@@ -93,7 +90,7 @@ class EmployeeRequest extends FormRequest
     {
         $this->validateMultipleMediaFields([
             'avatar' => [$this->input('avatar', [])],
-            // 'galleries' => json_decode($this->input('galleries', '[]'), true),
+            'albums' => $this->input('albums', '[]'),
         ]);
     }
 }

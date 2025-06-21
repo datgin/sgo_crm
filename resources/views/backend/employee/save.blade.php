@@ -142,6 +142,10 @@
                     </div>
                 </div>
 
+                <x-card title="Albums" class="text-center">
+                    <x-media name="albums" multiple="true" :selected="$employee->albums ?? []" />
+                </x-card>
+
                 <div class="card" id="previewArea"
                     style="{{ $employee && $employee->latestContract ? '' : 'display: none;' }}">
                     <div class="card-header">
@@ -161,8 +165,7 @@
                 <x-submit />
 
                 <x-card title="Ảnh 3x4" class="text-center">
-                    {{-- <x-file name="avatar" :value="$employee->avatar ?? showImage('')" /> --}}
-                    <x-media name="avatar" :selected="$employee->avatar ?? ''" />
+                    <x-media name="avatar" :selected="$employee->avatar ?? []" />
                 </x-card>
 
                 <x-card title="Tình trạng làm việc">
@@ -273,3 +276,4 @@
         })
     </script>
 @endpush
+

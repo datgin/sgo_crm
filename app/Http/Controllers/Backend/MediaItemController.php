@@ -19,7 +19,7 @@ class MediaItemController extends Controller
             $query->where('name', 'like', '%' . $search . '%');
         }
 
-        $mediaItems = $query->paginate(2);
+        $mediaItems = $query->paginate(12);
 
         return response()->json([
             'data' => $mediaItems->map(function ($item) {
@@ -66,7 +66,6 @@ class MediaItemController extends Controller
             ],
         ]);
     }
-
 
     public function upload(Request $request)
     {
