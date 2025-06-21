@@ -44,11 +44,11 @@
                 <x-submit />
 
                 <x-card title="Logo" class="text-center">
-                    <x-file name="logo" width="100%" :value="showImage($setting->logo)" />
+                    <x-file name="logo" width="100%" :value="fileExists($setting->logo)" />
                 </x-card>
 
                 <x-card title="Icon" class="text-center">
-                    <x-file name="favicon" width="100%" :value="showImage($setting->favicon)" />
+                    <x-file name="favicon" width="100%" :value="fileExists($setting->favicon)" />
                 </x-card>
 
             </div>
