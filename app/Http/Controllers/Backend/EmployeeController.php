@@ -202,14 +202,12 @@ class EmployeeController extends Controller
         }
     }
 
-
     public function update(EmployeeRequest $request, $id)
     {
+        // dd($request->validated());
         $this->authorize('edit', Employee::class);
 
         $employee = Employee::findOrFail($id);
-        // $uploadAvatar = null;
-        // $oldAvatar = $employee->getRawOriginal('avatar');
         $email = $employee->email;
 
         return transaction(function () use ($request, $employee, $email) {

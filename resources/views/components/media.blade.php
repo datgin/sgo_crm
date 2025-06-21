@@ -14,42 +14,37 @@
             Bấm để chọn ảnh
         </div>
     </div>
-    <input type="hidden" name="{{ $name }}" class="selected-images-input" value='@json($selected)'>
+
+    <div id="{{ $uid }}_selected-images-input" data-name="{{ $name }}"></div>
+
 </div>
 
 
-@once
-    @push('scripts')
-        <script>
-            document.addEventListener("DOMContentLoaded", function() {
-                const $wrapper = document.getElementById("{{ $uid }}_upload_wrapper");
-                const uid = "{{ $uid }}";
-                const multiple = {{ $multiple ? 'true' : 'false' }};
-                const selected = @json($selected);
+@push('scripts')
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const uid = "{{ $uid }}";
+            const selected = @json($selected);
+            const multiple = {{ $multiple ? 'true' : 'false' }};
 
-                if (!selected || (typeof selected === 'object' && Object.keys(selected).length === 0)) {
-                    return;
-                }
+            if (!selected || Object.keys(selected).length === 0) return;
 
-                if (!window.selectedImgs) window.selectedImgs = {};
-                if (!selectedImgs[uid]) selectedImgs[uid] = new Map();
+            if (!window.selectedImages) window.selectedImages = {};
+            if (!selectedImages[uid]) selectedImages[uid] = new Map();
 
-                // Gán ảnh đã chọn vào selectedImgs (ID giả từ 1000000 trở lên)
-                if (typeof selected === 'string') {
-                    // Trường hợp chỉ 1 ảnh (multiple = false)
-                    selectedImgs[uid].set(1000000, selected); // ID giả
-                } else if (typeof selected === 'object' && selected !== null) {
-                    // Trường hợp nhiều ảnh (multiple = true)
-                    Object.entries(selected).forEach(([id, path]) => {
-                        selectedImgs[uid].set(parseInt(id), path);
-                    });
-                }
+            if (Array.isArray(selected)) {
 
+                selected.forEach((path) => {
+                    const uniqueId = Date.now().toString() + Math.floor(Math.random() * 1000000);
+                    selectedImages[uid].set(uniqueId, path);
+                });
+            }
 
-                // Cập nhật giao diện preview ban đầu
-                window.mediaPopup.currentUid = uid;
-                window.mediaPopup.handleSelect();
+            window.mediaPopup.currentUid = uid;
+            window.mediaPopup.handleSelect({
+                uid,
+                multiple
             });
-        </script>
-    @endpush
-@endonce
+        });
+    </script>
+@endpush
