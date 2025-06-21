@@ -142,9 +142,9 @@
                     </div>
                 </div>
 
-                <x-card title="Albums" class="text-center">
+                {{-- <x-card title="Albums" class="text-center">
                     <x-media name="albums" multiple="true" :selected="$employee->albums ?? []" />
-                </x-card>
+                </x-card> --}}
 
                 <div class="card" id="previewArea"
                     style="{{ $employee && $employee->latestContract ? '' : 'display: none;' }}">
