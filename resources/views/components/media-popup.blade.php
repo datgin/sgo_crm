@@ -1,9 +1,9 @@
 <!-- Popup chọn ảnh -->
-<div id="media_popup" class="image-popup shadow-lg rounded bg-white d-none border"
-    style="position: fixed; width: 90%; height: 90vh; z-index: 9999; top: 50%; left: 50%; transform: translate(-50%, -50%);">
+<div id="media_popup" class="image-popup shadow-lg rounded bg-white border"
+    style="display: none; position: fixed; width: 90%; height: 90vh; z-index: 1000; top: 50%; left: 50%; transform: translate(-50%, -50%);">
     <div class="popup-header border-bottom p-3 d-flex justify-content-between align-items-center bg-light cursor-move">
         <h5 class="mb-0">📁 Thư viện ảnh</h5>
-        <button type="button" class="btn btn-sm btn-outline-danger" data-close><i
+        <button onclick="window.mediaPopup.close()" type="button" class="btn btn-sm btn-outline-danger" data-close><i
                 class="fas fa-times-circle"></i></button>
     </div>
 
@@ -12,10 +12,12 @@
             <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
                 <div class="d-flex gap-2 align-items-center">
                     <input type="file" id="popup_upload_input" class="d-none" accept="image/*" multiple>
-                    <button type="button" class="btn btn-outline-primary btn-sm" id="popup_upload_btn">
+                    <button onclick="window.mediaPopup.upload()" type="button" class="btn btn-outline-primary btn-sm"
+                        id="popup_upload_btn">
                         <i class="fas fa-cloud-upload-alt me-1"></i> Tải ảnh lên
                     </button>
-                    <button type="button" class="btn btn-outline-danger btn-sm d-none" id="delete_btn">
+                    <button type="button" onclick="window.mediaPopup.delete()"
+                        class="btn btn-outline-danger btn-sm d-none" id="delete_btn">
                         <i class="fas fa-trash-alt me-1"></i> Xoá ảnh đã chọn
                     </button>
                 </div>
@@ -28,18 +30,22 @@
 
             <div data-list></div>
         </div>
-        <div class=" p-3" style="flex: 0 0 18%; max-width: 18%; background: #fcfcfc;" data-detail
-            style="background: #fcfcfc;">
+        <div class="p-3 overflow-auto h-100" style="flex: 0 0 18%; max-width: 18%; background: #fcfcfc;" data-detail>
             <div class="text-muted fst-italic">Chọn ảnh để xem thông tin</div>
         </div>
     </div>
 
     <div class="popup-footer p-3 border-top bg-light text-end">
-        <button type="button" class="btn btn-primary" data-select><i class="bi bi-check2-circle"></i> Chọn ảnh</button>
+        <button type="button" onclick="window.mediaPopup.handleSelect()" class="btn btn-primary" data-select><i
+                class="bi bi-check2-circle"></i> Chọn ảnh</button>
     </div>
 </div>
 
 @push('scripts')
+    <script src="{{ asset('global/js/media.js') }}"></script>
+@endpush
+
+{{-- @push('scripts')
     <script>
         let currentTargetWrapper = null;
         let currentSelected = [];
@@ -199,4 +205,4 @@
             });
         })
     </script>
-@endpush
+@endpush --}}

@@ -11,7 +11,7 @@ class Media extends Component
     /**
      * Create a new component instance.
      */
-    public function __construct(public string $name, public bool $multiple = true, public array $selected = [])
+    public function __construct(public string $name, public bool $multiple = false, public mixed $selected = [])
     {
         //
     }

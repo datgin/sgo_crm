@@ -6,13 +6,35 @@ use Intervention\Image\ImageManager;
 
 
 if (!function_exists('showImage')) {
-    function showImage($image)
+    function showImage(?string $absoluteUrl): string
+    {
+        if (!$absoluteUrl) {
+            return asset('assets/backend/images/image-default.png');
+        }
+
+        $parsedPath = parse_url($absoluteUrl, PHP_URL_PATH);
+        $relativePath = ltrim(str_replace('/storage/', '', $parsedPath), '/');
+
+        /** @var \Illuminate\Contracts\Filesystem\Filesystem|\Illuminate\Filesystem\FilesystemAdapter $storage */
+        $storage = Storage::disk('public');
+
+        if ($storage->exists($relativePath)) {
+            return $absoluteUrl;
+            // return $storage->url($relativePath);
+        }
+
+        return asset('assets/backend/images/image-default.png');
+    }
+}
+
+if (!function_exists('fileExists')) {
+    function fileExists(?string $relativePath): ?string
     {
         /** @var FilesystemAdapter $storage */
         $storage = Storage::disk('public');
 
-        if ($image && $storage->exists($image)) {
-            return $storage->url($image);
+        if ($relativePath && $storage->exists($relativePath)) {
+            return $storage->url($relativePath);
         }
 
         return asset('assets/backend/images/image-default.png');
