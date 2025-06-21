@@ -83,7 +83,8 @@ function submitForm(formId, successCallback, url = null, errorCallback = null) {
 }
 
 function formatDate(dateString, format = "DD-MM-YYYY") {
-    if (!dateString) return "<span class='text-muted'>NA</span>";
+    if (!dateString)
+        return '<small class="text-muted">Chưa cập nhật...</small>';
     return dayjs(dateString).format(format);
 }
 

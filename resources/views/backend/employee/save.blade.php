@@ -41,7 +41,7 @@
                             </div>
 
                             <div class="col-md-6">
-                                <x-input type="password" name="password" id="password"
+                                <x-input type="password" required="true" name="password" id="password"
                                     label="Mật khẩu {{ $employee ? 'mới (bỏ qua nếu không đổi)' : '' }}"
                                     placeholder="Mật khẩu" />
                             </div>
@@ -149,7 +149,7 @@
                     </div>
                     <div class="card-body">
                         <iframe
-                            src="{{ $employee && $employee->latestContract && $employee->latestContract->file_url ? showImage($employee->latestContract->file_url) : '' }}"
+                            src="{{ $employee && $employee->latestContract && $employee->latestContract->file_url ? fileExists($employee->latestContract->file_url) : '' }}"
                             id="filePreview" width="100%" height="600px" frameborder="0"></iframe>
                     </div>
                 </div>
@@ -161,7 +161,8 @@
                 <x-submit />
 
                 <x-card title="Ảnh 3x4" class="text-center">
-                    <x-file name="avatar" :value="$employee->avatar ?? showImage('')" />
+                    {{-- <x-file name="avatar" :value="$employee->avatar ?? showImage('')" /> --}}
+                    <x-media name="avatar" :selected="$employee->avatar ?? ''" />
                 </x-card>
 
                 <x-card title="Tình trạng làm việc">
@@ -176,9 +177,12 @@
                 <x-card title="Trạng thái">
                     <x-switch-checkbox :checked="$employee->status ?? true" />
                 </x-card>
+
             </div>
         </div>
     </form>
+
+    <x-media-popup />
 @endsection
 
 @push('scripts')

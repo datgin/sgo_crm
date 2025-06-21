@@ -38,6 +38,9 @@ const columns = [
         data: "phone",
         name: "phone",
         title: "Số điện thoại",
+        render(data, type, row) {
+            return data || '<small class="text-muted">Chưa cập nhật...</small>';
+        },
     },
     {
         data: "email",
@@ -49,6 +52,8 @@ const columns = [
         data: "address",
         name: "address",
         title: "Địa chỉ tạm trú",
+        render: (data) =>
+            data || '<small class="text-muted">Chưa cập nhật...</small>',
     },
     {
         data: "birthday",
@@ -90,7 +95,7 @@ const columns = [
         title: "Số CCCD",
         searchable: false,
         render: function (data, type, row, meta) {
-            if (!data) return "";
+            if (!data) return '<small class="text-muted">Chưa cập nhật...</small>';
             return data.substring(0, 2) + "x".repeat(data.length - 2);
         },
         orderable: false,
@@ -163,7 +168,7 @@ const columns = [
         name: "notes",
         title: "Ghi chú",
         render: function (data) {
-            return data ?? '<span class="text-muted">NA</span>';
+            return data ?? '<small class="text-muted">Chưa cập nhật...</small>';
         },
         orderable: false,
         searchable: false,

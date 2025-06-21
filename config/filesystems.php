@@ -30,6 +30,13 @@ return [
 
     'disks' => [
 
+        'media' => [
+            'driver' => 'local',
+            'root' => storage_path('app/public/media'), // << thư mục lưu file
+            'url' => env('APP_URL') . '/storage/media',
+            'visibility' => 'public',
+        ],
+
         'local' => [
             'driver' => 'local',
             'root' => storage_path('app'),
@@ -39,7 +46,7 @@ return [
         'public' => [
             'driver' => 'local',
             'root' => storage_path('app/public'),
-            'url' => env('APP_URL').'/storage',
+            'url' => env('APP_URL') . '/storage',
             'visibility' => 'public',
             'throw' => false,
         ],

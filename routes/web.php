@@ -54,6 +54,7 @@ Route::middleware('admin.auth')->group(function () {
     Route::group(['prefix' => 'media', 'controller' => MediaItemController::class], function () {
         Route::get('/', 'list');
         Route::post('upload', 'upload');
+        Route::delete('destroy', 'destroy');
     });
 
 

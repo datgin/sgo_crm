@@ -74,7 +74,7 @@ class Employee extends Model
     public function getAgeAttribute()
     {
         if (!$this->birthday) {
-            return null;
+            return '<small class="text-muted">Chưa cập nhật...</small>';
         }
 
         return Carbon::now()->diffInYears(Carbon::parse($this->birthday));
@@ -85,7 +85,7 @@ class Employee extends Model
 
         $contract = $this->latestContract;
         if (!$contract || !$contract->start_date) {
-            return 'Chưa xác định';
+            return '<small class="text-muted">Không xác định</small>';
         }
 
         $start = Carbon::parse($contract->start_date);
@@ -120,7 +120,7 @@ class Employee extends Model
     {
         $contract = $this->latestContract;
         if (!$contract || !$contract->start_date) {
-            return 'Chưa xác định';
+            return '<small class="text-muted">Không xác định</small>';
         }
 
         $start = Carbon::parse($contract->start_date);

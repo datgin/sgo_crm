@@ -1,5 +1,5 @@
 <div class="sidebar-header">
-    <img src="{{ showImage($setting->logo) }}" class="logo-icon" alt="logo icon" />
+    <img src="{{ fileExists($setting->logo) }}" class="logo-icon" alt="logo icon" />
 </div>
 <!--navigation-->
 @php

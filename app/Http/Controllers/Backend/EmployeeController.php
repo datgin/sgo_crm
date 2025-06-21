@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Backend;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\EmployeeRequest;
-use App\Http\Resources\Employee\EmployeeCollection;
 use App\Models\ContractType;
 use App\Models\Department;
 use App\Models\EducationLevel;
@@ -17,7 +16,6 @@ use App\Traits\QueryBuilder;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
 class EmployeeController extends Controller
@@ -27,7 +25,7 @@ class EmployeeController extends Controller
 
     public function index(Request $request)
     {
-        $this->authorize('view', User::class);
+        $this->authorize('view', Employee::class);
 
         if ($request->ajax()) {
             $query = $this->queryBuilder(
@@ -40,18 +38,18 @@ class EmployeeController extends Controller
                 $query,
                 fn($dataTable) =>
                 $dataTable
-                    ->addColumn('position', fn($row) => $row->position ? $row->position->name : 'NA')
-                    ->addColumn('education_level', fn($row) => $row->educationLevel ? $row->educationLevel->name : 'NA')
-                    ->addColumn('contract_code', fn($row) => $row->latestContract ? $row->latestContract->code : "Không xác định")
-                    ->addColumn('contract_type', fn($row) => $row->latestContract ? $row->latestContract->contractType->name : "Không xác định")
-                    ->addColumn('contract_link', fn($row) => $row->latestContract ? "<a target='_blank' href='" . showImage($row->latestContract->file_url) . "'>Hợp đồng lao động</a>" : "Không xác định")
-                    ->addColumn('employment_status', fn($row) => $row->employmentStatus ? $row->employmentStatus->name : 'NA')
-                    ->addColumn('age', fn($row) => $row->age ?? 'NA')
+                    ->addColumn('position', fn($row) => $row->position ? $row->position->name : '<small class="text-muted">Chưa cập nhật...</small>')
+                    ->addColumn('education_level', fn($row) => $row->educationLevel ? $row->educationLevel->name : '<small class="text-muted">Chưa cập nhật...</small>')
+                    ->addColumn('contract_code', fn($row) => $row->latestContract ? $row->latestContract->code : '<small class="text-muted">Chưa cập nhật...</small>')
+                    ->addColumn('contract_type', fn($row) => $row->latestContract ? $row->latestContract->contractType->name : '<small class="text-muted">Chưa cập nhật...</small>')
+                    ->addColumn('contract_link', fn($row) => $row->latestContract ? "<a target='_blank' href='" . showImage($row->latestContract->file_url) . "'>Hợp đồng lao động</a>" : '<small class="text-muted">Chưa cập nhật...</small>')
+                    ->addColumn('employment_status', fn($row) => $row->employmentStatus ? $row->employmentStatus->name : '<small class="text-muted">Chưa cập nhật...</small>')
+                    ->addColumn('age', fn($row) => $row->age)
                     ->addColumn('seniority', fn($row) => $row->seniority)
                     ->editColumn('created_at', fn($row) => $row->created_at->format('d-m-Y'))
                     ->editColumn('status', fn($row) => view('components.switch-checkbox', ['checked' => $row->status, 'id' => $row->id])->render())
                     ->editColumn('operations', fn($row) => view('components.operation', ['row' => $row])->render()),
-                ['contract_link', 'status']
+                ['contract_link', 'age', 'status', 'contract_code', 'contract_type', 'position', 'education_level', 'employment_status', 'seniority']
 
             );
         }
@@ -133,7 +131,7 @@ class EmployeeController extends Controller
 
     public function save(?string $id = null)
     {
-        $this->authorize('create', User::class);
+        $this->authorize('create', Employee::class);
 
         $title          = "Tạo mới nhân viên";
         $employee       = null;
@@ -145,7 +143,7 @@ class EmployeeController extends Controller
         $contractTypes = ContractType::query()->pluck('name', 'id')->toArray();
 
         if (!empty($id)) {
-            $this->authorize('edit', User::class);
+            $this->authorize('edit', Employee::class);
 
             $employee   = Employee::query()->with('latestContract')->findOrFail($id);
             $title      = "Chỉnh sửa nhân viên - {$employee->full_name}";
@@ -156,20 +154,12 @@ class EmployeeController extends Controller
 
     public function store(EmployeeRequest $request)
     {
-        $this->authorize('create', User::class);
+        $this->authorize('create', Employee::class);
 
-        $uploadAvatar = null;
-
-        return transaction(function () use ($request, &$uploadAvatar) {
+        return transaction(function () use ($request) {
             $credentials = $request->validated();
             $credentials['code'] ??= $this->generateEmployeeCode();
             $credentials['password'] = bcrypt($credentials['password']);
-
-            // Upload avatar nếu có
-            if ($request->hasFile('avatar')) {
-                $uploadAvatar = uploadImages('avatar', 'employee');
-                $credentials['avatar'] = $uploadAvatar;
-            }
 
             // Tạo nhân viên
             $employee = Employee::create($credentials);
@@ -178,7 +168,7 @@ class EmployeeController extends Controller
             User::create([
                 'name' => $employee->full_name,
                 'email' => $employee->email,
-                'avatar' => $uploadAvatar,
+                'avatar' => $credentials['avatar'],
                 'phone' => $employee->phone,
                 'password' => $credentials['password'],
             ]);
@@ -187,8 +177,6 @@ class EmployeeController extends Controller
             $this->storeOrUpdateContract($employee, $credentials);
 
             return successResponse("Tạo nhân viên thành công", ['redirect' => '/employees']);
-        }, function () use ($uploadAvatar) {
-            deleteImage($uploadAvatar);
         });
     }
 
@@ -217,14 +205,14 @@ class EmployeeController extends Controller
 
     public function update(EmployeeRequest $request, $id)
     {
-        $this->authorize('edit', User::class);
+        $this->authorize('edit', Employee::class);
 
-        $uploadAvatar = null;
         $employee = Employee::findOrFail($id);
-        $oldAvatar = $employee->getRawOriginal('avatar');
+        // $uploadAvatar = null;
+        // $oldAvatar = $employee->getRawOriginal('avatar');
         $email = $employee->email;
 
-        return transaction(function () use ($request, &$uploadAvatar, $oldAvatar, $employee, $email) {
+        return transaction(function () use ($request, $employee, $email) {
             $credentials = $request->validated();
             $credentials['code'] ??= $this->generateEmployeeCode();
 
@@ -233,12 +221,6 @@ class EmployeeController extends Controller
                 $credentials['password'] = bcrypt($credentials['password']);
             } else {
                 unset($credentials['password']);
-            }
-
-            // Upload avatar nếu có
-            if ($request->hasFile('avatar')) {
-                $uploadAvatar = uploadImages('avatar', 'employee');
-                $credentials['avatar'] = $uploadAvatar;
             }
 
             // Cập nhật nhân viên
@@ -253,21 +235,14 @@ class EmployeeController extends Controller
                 $user->update([
                     'name' => $employee->full_name,
                     'email' => $employee->email,
-                    'avatar' => $uploadAvatar ?? $oldAvatar,
+                    'avatar' => $employee->avatar,
                     'phone' => $employee->phone,
                 ] + ($request->filled('password') ? ['password' => bcrypt($request->input('password'))] : []));
             }
 
-            if ($uploadAvatar) {
-                deleteImage($oldAvatar);
-            }
-
             return successResponse("Lưu thay đổi thành công", ['redirect' => '/employees']);
-        }, function () use ($uploadAvatar) {
-            deleteImage($uploadAvatar);
         });
     }
-
 
     private function generateEmployeeCode(): string
     {
@@ -278,14 +253,14 @@ class EmployeeController extends Controller
             ->value('code');
 
         if (!$lastCode) {
-            return 'NS001';
+            return 'NS00001';
         }
 
         // Lấy phần số phía sau mã
         $number = (int) Str::after($lastCode, 'NS');
         $nextNumber = $number + 1;
 
-        // Tạo mã mới có dạng NS001 hoặc NS1000
-        return 'NS' . str_pad($nextNumber, strlen($number < 1000 ? 3 : strlen((string)$nextNumber)), '0', STR_PAD_LEFT);
+        // Luôn pad đến 5 chữ số
+        return 'NS' . str_pad($nextNumber, 5, '0', STR_PAD_LEFT);
     }
 }
