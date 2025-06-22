@@ -9,180 +9,331 @@
                 <div class="card-body">
                     <div class="d-flex align-items-start gap-2">
                         <div>
-                            <p class="mb-0 fs-6">Total Revenue</p>
+                            <p class="mb-0 fs-6">Tổng nhân viên</p>
                         </div>
                         <div class="ms-auto widget-icon-small text-white bg-gradient-purple">
-                            <ion-icon name="wallet-outline"></ion-icon>
+                            <ion-icon name="people-circle-outline"></ion-icon>
                         </div>
                     </div>
                     <div class="d-flex align-items-center mt-3">
                         <div>
-                            <h4 class="mb-0">$92,854</h4>
+                            <h4 class="mb-0">{{ $statistics->total_employees }}</h4>
                         </div>
-                        <div class="ms-auto">+6.32%</div>
                     </div>
                 </div>
             </div>
         </div>
+
         <div class="col">
             <div class="card radius-10">
                 <div class="card-body">
                     <div class="d-flex align-items-start gap-2">
                         <div>
-                            <p class="mb-0 fs-6">Total Customer</p>
-                        </div>
-                        <div class="ms-auto widget-icon-small text-white bg-gradient-info">
-                            <ion-icon name="people-outline"></ion-icon>
-                        </div>
-                    </div>
-                    <div class="d-flex align-items-center mt-3">
-                        <div>
-                            <h4 class="mb-0">48,789</h4>
-                        </div>
-                        <div class="ms-auto">+12.45%</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col">
-            <div class="card radius-10">
-                <div class="card-body">
-                    <div class="d-flex align-items-start gap-2">
-                        <div>
-                            <p class="mb-0 fs-6">Total Orders</p>
-                        </div>
-                        <div class="ms-auto widget-icon-small text-white bg-gradient-danger">
-                            <ion-icon name="bag-handle-outline"></ion-icon>
-                        </div>
-                    </div>
-                    <div class="d-flex align-items-center mt-3">
-                        <div>
-                            <h4 class="mb-0">88,234</h4>
-                        </div>
-                        <div class="ms-auto">+3.12%</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col">
-            <div class="card radius-10">
-                <div class="card-body">
-                    <div class="d-flex align-items-start gap-2">
-                        <div>
-                            <p class="mb-0 fs-6">Conversion Rate</p>
+                            <p class="mb-0 fs-6">Đang làm việc</p>
                         </div>
                         <div class="ms-auto widget-icon-small text-white bg-gradient-success">
-                            <ion-icon name="bar-chart-outline"></ion-icon>
+                            <ion-icon name="briefcase-outline"></ion-icon>
                         </div>
                     </div>
                     <div class="d-flex align-items-center mt-3">
                         <div>
-                            <h4 class="mb-0">48.76%</h4>
+                            <h4 class="mb-0">{{ $statistics->active_employees }}</h4>
                         </div>
-                        <div class="ms-auto">+8.52%</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col">
+            <div class="card radius-10">
+                <div class="card-body">
+                    <div class="d-flex align-items-start gap-2">
+                        <div>
+                            <p class="mb-0 fs-6">Đã nghỉ việc</p>
+                        </div>
+                        <div class="ms-auto widget-icon-small text-white bg-gradient-danger">
+                            <ion-icon name="close-circle-outline"></ion-icon>
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-center mt-3">
+                        <div>
+                            <h4 class="mb-0">{{ $statistics->resigned_employees }}</h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col">
+            <div class="card radius-10">
+                <div class="card-body">
+                    <div class="d-flex align-items-start gap-2">
+                        <div>
+                            <p class="mb-0 fs-6">Sinh nhật tháng này</p>
+                        </div>
+                        <div class="ms-auto widget-icon-small text-white bg-gradient-info">
+                            <ion-icon name="gift-outline"></ion-icon>
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-center mt-3">
+                        <div>
+                            <h4 class="mb-0">{{ $statistics->birthday_this_month }}</h4>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+
     <!--end row-->
 
-    <div class="card radius-10 w-100">
-        <div class="card-body">
-            <div class="d-flex align-items-center">
-                <h6 class="mb-0">Recent Orders</h6>
-                <div class="fs-5 ms-auto dropdown">
-                    <div class="dropdown-toggle dropdown-toggle-nocaret cursor-pointer" data-bs-toggle="dropdown">
-                        <i class="bi bi-three-dots"></i>
-                    </div>
-                    <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="#">Action</a></li>
-                        <li>
-                            <a class="dropdown-item" href="#">Another action</a>
-                        </li>
-                        <li>
-                            <hr class="dropdown-divider" />
-                        </li>
-                        <li>
-                            <a class="dropdown-item" href="#">Something else here</a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-            <div class="table-responsive mt-2">
-                <table class="table align-middle mb-0">
-                    <thead class="table-light">
-                        <tr>
-                            <th>#ID</th>
-                            <th>Product</th>
-                            <th>Quantity</th>
-                            <th>Price</th>
-                            <th>Date</th>
-                            <th>Status</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>#89742</td>
-                            <td>
-                                <div class="d-flex align-items-center gap-3">
-                                    <div class="product-box border">
-                                        <img src="" alt="" />
-                                    </div>
-                                    <div class="product-info">
-                                        <h6 class="product-name mb-1">
-                                            Smart Mobile Phone
-                                        </h6>
-                                    </div>
-                                </div>
-                            </td>
-                            <td>2</td>
-                            <td>$214</td>
-                            <td><span class="badge bg-success">Completed</span></td>
-                            <td>Apr 8, 2021</td>
-                            <td>
-                                <div class="d-flex align-items-center gap-3 fs-6">
-                                    <a href="javascript:;" class="text-primary" data-bs-toggle="tooltip"
-                                        data-bs-placement="bottom" title="" data-bs-original-title="View detail"
-                                        aria-label="Views">
-                                        <ion-icon name="eye-outline"></ion-icon>
-                                    </a>
-                                    <a href="javascript:;" class="text-warning" data-bs-toggle="tooltip"
-                                        data-bs-placement="bottom" title="" data-bs-original-title="Edit info"
-                                        aria-label="Edit">
-                                        <ion-icon name="pencil-outline"></ion-icon>
-                                    </a>
-                                    <a href="javascript:;" class="text-danger" data-bs-toggle="tooltip"
-                                        data-bs-placement="bottom" title="" data-bs-original-title="Delete"
-                                        aria-label="Delete">
-                                        <ion-icon name="trash-outline"></ion-icon>
-                                    </a>
-                                </div>
-                            </td>
-                        </tr>
-
-                    </tbody>
-                </table>
-            </div>
+    <div class="row">
+        <div class="col-lg-6">
+            <div id="chart-container"></div>
+        </div>
+        <div class="col-lg-6">
+            <div id="department-percentage-pie"></div>
+        </div>
+        <div class="col-lg-6">
+            <div id="gender-bar-chart"></div>
+        </div>
+        <div class="col-lg-6">
+            <div id="education-level-chart"></div>
+        </div>
+        <div class="col-lg-6">
+            <div id="contract-type-chart"></div>
+        </div>
+        <div class="col-lg-6">
+            <div id="seniority-chart"></div>
         </div>
     </div>
 @endsection
 
 @push('scripts')
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/highcharts-3d.js"></script>
 
     <script>
-        // $(function() {
-        // formValidator.set({
-        //     email: "required|email",
-        // }, {
-        //     email: "Email",
-        // });
+        document.addEventListener('DOMContentLoaded', function() {
+            // 1. Trạng thái nhân viên theo phòng ban - Column 3D Grouped
+            Highcharts.chart('chart-container', {
+                chart: {
+                    type: 'column',
+                    options3d: {
+                        enabled: true,
+                        alpha: 15,
+                        beta: 15,
+                        depth: 50,
+                        viewDistance: 25
+                    }
+                },
+                title: {
+                    text: 'Thống kê trạng thái nhân viên theo phòng ban'
+                },
+                xAxis: {
+                    categories: {!! json_encode($departments) !!},
+                    crosshair: true
+                },
+                yAxis: {
+                    min: 0,
+                    title: {
+                        text: 'Số lượng'
+                    }
+                },
+                tooltip: {
+                    shared: true,
+                    useHTML: true
+                },
+                plotOptions: {
+                    column: {
+                        depth: 25
+                    }
+                },
+                series: {!! json_encode($series) !!}
+            });
 
-        // submitForm("#myForm", function(response) {
-        //     console.log("Success:", response);
-        // });
+            // 2. Tỷ lệ nhân sự mỗi phòng ban - Pie 3D
+            Highcharts.chart('department-percentage-pie', {
+                chart: {
+                    type: 'pie',
+                    options3d: {
+                        enabled: true,
+                        alpha: 45,
+                        beta: 0
+                    }
+                },
+                title: {
+                    text: 'Tỷ lệ nhân sự mỗi phòng ban'
+                },
+                tooltip: {
+                    pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+                },
+                accessibility: {
+                    point: {
+                        valueSuffix: '%'
+                    }
+                },
+                plotOptions: {
+                    pie: {
+                        allowPointSelect: true,
+                        depth: 35,
+                        cursor: 'pointer',
+                        dataLabels: {
+                            enabled: true,
+                            format: '<b>{point.name}</b>: {point.percentage:.1f} %'
+                        }
+                    }
+                },
+                series: [{
+                    name: 'Tỷ lệ',
+                    colorByPoint: true,
+                    data: {!! json_encode($departmentPercentage) !!}
+                }]
+            });
 
-        // })
+            // 3. Cơ cấu giới tính - Column 3D đơn
+            const genderData = {!! json_encode($genderStructure) !!};
+
+            Highcharts.chart('gender-bar-chart', {
+                chart: {
+                    type: 'bar'
+                },
+                title: {
+                    text: 'Cơ cấu nhân viên theo giới tính'
+                },
+                xAxis: {
+                    categories: genderData.map(item => item.name),
+                    title: {
+                        text: null
+                    }
+                },
+                yAxis: {
+                    min: 0,
+                    title: {
+                        text: 'Số lượng',
+                        align: 'high'
+                    },
+                    labels: {
+                        overflow: 'justify'
+                    }
+                },
+                tooltip: {
+                    valueSuffix: ' người'
+                },
+                plotOptions: {
+                    bar: {
+                        dataLabels: {
+                            enabled: true
+                        },
+                        colorByPoint: true
+                    }
+                },
+                series: [{
+                    name: 'Giới tính',
+                    data: genderData.map(item => item.y)
+                }]
+            });
+
+            const educationData = {!! json_encode($educationStructure) !!};
+
+            Highcharts.chart('education-level-chart', {
+                chart: {
+                    type: 'pie'
+                },
+                title: {
+                    text: 'Cơ cấu nhân viên theo trình độ học vấn'
+                },
+                plotOptions: {
+                    pie: {
+                        innerSize: '50%',
+                        depth: 45,
+                        dataLabels: {
+                            enabled: true,
+                            format: '<b>{point.name}</b>: {point.y} người'
+                        }
+                    }
+                },
+                tooltip: {
+                    pointFormat: '{series.name}: <b>{point.y} người</b>'
+                },
+                series: [{
+                    name: 'Nhân viên',
+                    data: educationData
+                }]
+            });
+            const contractData = {!! json_encode($contractStructure) !!};
+
+            Highcharts.chart('contract-type-chart', {
+                chart: {
+                    type: 'column'
+                },
+                title: {
+                    text: 'Cơ cấu nhân sự đang làm việc theo loại hợp đồng'
+                },
+                xAxis: {
+                    categories: contractData.map(item => item.name),
+                    title: {
+                        text: null
+                    }
+                },
+                yAxis: {
+                    min: 0,
+                    title: {
+                        text: 'Số lượng nhân viên'
+                    }
+                },
+                tooltip: {
+                    pointFormat: '<b>{point.y} nhân viên</b>'
+                },
+                plotOptions: {
+                    column: {
+                        dataLabels: {
+                            enabled: true
+                        },
+                        colorByPoint: true
+                    }
+                },
+                series: [{
+                    name: 'Hợp đồng',
+                    data: contractData.map(item => item.y)
+                }]
+            });
+            Highcharts.chart('seniority-chart', {
+                chart: {
+                    type: 'area'
+                },
+                title: {
+                    text: 'Cơ cấu nhân viên theo thâm niên phòng ban'
+                },
+                xAxis: {
+                    categories: {!! json_encode($seniorityDepartments) !!},
+                    tickmarkPlacement: 'on',
+                    title: {
+                        enabled: false
+                    }
+                },
+                yAxis: {
+                    title: {
+                        text: 'Số lượng nhân viên'
+                    }
+                },
+                tooltip: {
+                    shared: true,
+                    valueSuffix: ' người'
+                },
+                plotOptions: {
+                    area: {
+                        stacking: 'normal',
+                        lineColor: '#666666',
+                        lineWidth: 1,
+                        marker: {
+                            lineWidth: 1,
+                            lineColor: '#666666'
+                        }
+                    }
+                },
+                series: {!! json_encode($senioritySeries) !!}
+            });
+        });
     </script>
 @endpush
