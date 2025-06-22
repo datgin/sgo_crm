@@ -44,7 +44,7 @@ class EmployeeRequest extends FormRequest
             'education_level_id' => ['required', 'exists:education_levels,id'],
 
             'contract_type_id' => ['nullable', 'exists:contract_types,id'],
-            'file_url'         => $id && !$hasContract ? ['nullable'] : ['required', 'file', 'mimes:pdf', 'max:10240'],
+            'file_url'         => $id && $hasContract ? ['nullable'] : ['required', 'file', 'mimes:pdf', 'max:10240'],
             'start_date'       => $hasContract ? ['required', 'date_format:d-m-Y'] : ['nullable'],
             'end_date'         => $hasContract ? ['required', 'date_format:d-m-Y', 'after_or_equal:start_date'] : ['nullable'],
             'salary'           => $hasContract ? ['required', 'numeric', 'min:0'] : ['nullable'],
@@ -52,7 +52,7 @@ class EmployeeRequest extends FormRequest
             'resignation_date' => ['nullable', 'date', 'after_or_equal:birthday'],
             'employment_status_id' => ['required', 'exists:employment_statuses,id'],
             'notes' => ['nullable', 'string', 'max:1000'],
-            'avatar' => ['nullable', 'url'],
+            'avatar' => ['required', 'url'],
             'albums' => ['nullable', 'array'],
             'albums.*' => ['url'],
         ];
