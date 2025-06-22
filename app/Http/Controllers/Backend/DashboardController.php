@@ -63,11 +63,16 @@ class DashboardController extends Controller
         $statuses = [];
 
         foreach ($data as $row) {
-            $departments[] = $row->department;
+            // tránh trùng phòng ban
+            if (!in_array($row->department, $departments)) {
+                $departments[] = $row->department;
+            }
+
             $statuses[$row->status][$row->department] = $row->total;
         }
 
-        $departments = array_unique($departments);
+        // ⚠️ Reset key tuần tự để highcharts hoạt động đúng
+        $departments = array_values($departments);
 
         $series = [];
         foreach ($statuses as $statusName => $deptData) {
@@ -81,7 +86,6 @@ class DashboardController extends Controller
 
         return [$departments, $series];
     }
-
 
     private function getDepartmentEmployeePercentage()
     {
