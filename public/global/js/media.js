@@ -6,8 +6,7 @@ let selectedImages = {};
 window.mediaPopup = {
     currentUid: null,
     multiple: false,
-
-    open(e, uid) {
+    open(e, uid, multiple) {
         if (
             $(e.target).closest(
                 ".selected-img, .btn-remove-img, .btn-preview-img"
@@ -16,7 +15,7 @@ window.mediaPopup = {
             return;
 
         this.currentUid = uid;
-        this.multiple = $(`#${uid}_upload_wrapper`).data("multiple");
+        this.multiple = multiple;
 
         if (!selectedImages[uid]) {
             selectedImages[uid] = new Map();
@@ -220,66 +219,83 @@ window.mediaPopup = {
             }
         });
     },
-    handleSelect({ uid, multiple = false }) {
-        const selectedImg = selectedImages[uid];
+    handleSelect: internalHandleSelect,
+};
 
-        // Duyệt qua ảnh tạm thời
+function internalHandleSelect() {
+    const uid = window.mediaPopup.currentUid;
+    const multiple = window.mediaPopup.multiple;
+    const selectedImg = selectedImages[uid];
+
+    const hasTempImages = Object.keys(tempSelectedImages).length > 0;
+
+    // Nếu chỉ chọn 1 ảnh (multiple = false) và có ảnh tạm được chọn
+    if (!multiple && hasTempImages) {
+        selectedImg.clear(); // Xoá toàn bộ ảnh cũ
+
+        // Thêm chỉ 1 ảnh đầu tiên từ temp vào selectedImg
+        const [firstId, firstPath] = Object.entries(tempSelectedImages)[0];
+        selectedImg.set(firstId, firstPath);
+    }
+
+    // Nếu multiple = true hoặc không có ảnh tạm → thêm như cũ
+    if (multiple && hasTempImages) {
         for (const [id, path] of Object.entries(tempSelectedImages)) {
-            // Kiểm tra path đã có trong selectedImg chưa
             const exists = Array.from(selectedImg.values()).includes(path);
-
             if (!exists) {
-                selectedImg.set(id, path); // dùng luôn id từ temp
+                selectedImg.set(id, path);
             }
         }
+    }
 
-        const $preview = $(`#${uid}_upload-preview`);
-        const $placeholder = $(`#${uid}_placeholder_text`);
+    // Render giao diện
+    const $preview = $(`#${uid}_upload-preview`);
+    const $placeholder = $(`#${uid}_placeholder_text`);
+    const $inputWrapper = $(`#${uid}_selected-images-input`);
 
-        const images = Array.from(selectedImg.entries()).map(([id, path]) => ({
-            id,
-            path,
-        }));
+    const images = Array.from(selectedImg.entries()).map(([id, path]) => ({
+        id,
+        path,
+    }));
 
-        let html = "";
-        $.each(images, function (i, img) {
-            html += `
-                <div data-uid="${uid}" data-id="${img.id}" class="position-relative selected-img" style="width: 100px; height: 100px; flex-shrink: 0;">
-                    <div class="w-100 h-100 position-relative overflow-hidden rounded">
-                        <img src="${img.path}" data-path="${img.path}" class="img-thumbnail w-100 h-100 object-fit-cover rounded">
-                        <div class="overlay-hover-image position-absolute top-0 start-0 w-100 h-100 bg-dark bg-opacity-50 gap-2 justify-content-center align-items-center" style="display: none;">
-                            <a href="${img.path}" data-lightbox="preview-${uid}" class="btn-preview-img">
-                                <i class="fas fa-eye shadow fw-medium" title="Xem ảnh"></i>
-                            </a>
-                            <i class="far fa-trash-alt btn-remove-img shadow" title="Xoá ảnh"></i>
-                        </div>
+    let html = "";
+    $.each(images, function (i, img) {
+        html += `
+            <div data-uid="${uid}" data-id="${img.id}" class="position-relative selected-img" style="width: 100px; height: 100px; flex-shrink: 0;">
+                <div class="w-100 h-100 position-relative overflow-hidden rounded">
+                    <img src="${img.path}" data-path="${img.path}" class="img-thumbnail w-100 h-100 object-fit-cover rounded">
+                    <div class="overlay-hover-image position-absolute top-0 start-0 w-100 h-100 bg-dark bg-opacity-50 gap-2 justify-content-center align-items-center" style="display: none;">
+                        <a href="${img.path}" data-lightbox="preview-${uid}" class="btn-preview-img">
+                            <i class="fas fa-eye shadow fw-medium" title="Xem ảnh"></i>
+                        </a>
+                        <i class="far fa-trash-alt btn-remove-img shadow" title="Xoá ảnh"></i>
                     </div>
                 </div>
-            `;
-        });
+            </div>
+        `;
+    });
 
-        $preview.html(html);
-        $placeholder.toggle(images.length === 0);
-        const $inputWrapper = $(`#${uid}_selected-images-input`);
-        $inputWrapper.empty();
+    $preview.html(html);
+    $placeholder.toggle(images.length === 0);
 
-        images.forEach((img) => {
-            const input = document.createElement("input");
-            input.type = "hidden";
-            input.name = multiple
-                ? `${$inputWrapper.data("name")}[]`
-                : $inputWrapper.data("name");
-            input.value = img.path;
-            input.dataset.id = img.id;
-            input.classList.add("selected-images-input");
-            $inputWrapper.append(input);
-        });
+    // Tạo lại input hidden
+    $inputWrapper.empty();
+    images.forEach((img) => {
+        const input = document.createElement("input");
+        input.type = "hidden";
+        input.name = multiple
+            ? `${$inputWrapper.data("name")}[]`
+            : $inputWrapper.data("name");
+        input.value = img.path;
+        input.dataset.id = img.id;
+        input.classList.add("selected-images-input");
+        $inputWrapper.append(input);
+    });
 
-        selectedIdsForDelete.clear();
-        tempSelectedImages = {};
-        window.mediaPopup.close();
-    },
-};
+    selectedIdsForDelete.clear();
+    tempSelectedImages = {};
+    window.mediaPopup.close();
+}
 
 function loadImages(page = 1, keyword = "") {
     const $list = $("div[data-list]");
@@ -403,7 +419,8 @@ $(document)
 
 $(document).on("click", ".btn-open-media", function (e) {
     const uid = $(this).data("uid");
-    window.mediaPopup.open(e, uid);
+    const multiple = $(this).data("multiple");
+    window.mediaPopup.open(e, uid, multiple);
 });
 
 $(document).on("click", ".btn-remove-img", function (e) {

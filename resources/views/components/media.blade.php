@@ -3,7 +3,8 @@
 @endphp
 
 <div id="{{ $uid }}_upload_wrapper" class="btn-open-media upload-glow-border" data-name="{{ $name }}"
-    data-multiple="{{ $multiple }}" data-selected='@json($selected)' data-uid="{{ $uid }}">
+    data-multiple="{{ $multiple ? 'true' : 'false' }}" data-selected='@json($selected)'
+    data-uid="{{ $uid }}">
     <div class="upload-wrapper rounded p-3 bg-light text-center d-flex justify-content-center align-items-center"
         style="cursor: pointer; min-height: 220px;">
         <div id="{{ $uid }}_upload-preview"
@@ -41,10 +42,9 @@
             }
 
             window.mediaPopup.currentUid = uid;
-            window.mediaPopup.handleSelect({
-                uid,
-                multiple
-            });
+            window.mediaPopup.multiple = multiple;
+
+            window.mediaPopup.handleSelect();
         });
     </script>
 @endpush
