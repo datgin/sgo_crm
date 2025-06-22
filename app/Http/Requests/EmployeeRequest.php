@@ -90,7 +90,7 @@ class EmployeeRequest extends FormRequest
     {
         $this->validateMultipleMediaFields([
             'avatar' => [$this->input('avatar', [])],
-            'albums' => $this->input('albums', '[]'),
+            'albums' => $this->input('albums', []),
         ]);
     }
 }
