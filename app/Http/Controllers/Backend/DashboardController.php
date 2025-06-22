@@ -50,13 +50,13 @@ class DashboardController extends Controller
     /**
      * Lấy thống kê trạng thái nhân viên theo phòng ban (cho Highcharts).
      */
-    private function getEmployeeStatusByDepartment()
+    private function getEmployeeStatusByDepartment(): array
     {
         $data = DB::table('employees as e')
             ->join('departments as d', 'e.department_id', '=', 'd.id')
             ->join('employment_statuses as s', 'e.employment_status_id', '=', 's.id')
-            ->select('d.name as department', 's.name as status', DB::raw('COUNT(*) as total'))
-            ->groupBy('d.name', 's.name')
+            ->select('d.id as dept_id', 'd.name as department', 's.id as status_id', 's.name as status', DB::raw('COUNT(*) as total'))
+            ->groupBy('d.id', 'd.name', 's.id', 's.name') // group theo ID để đảm bảo an toàn
             ->get();
 
         $departments = [];
@@ -81,6 +81,7 @@ class DashboardController extends Controller
 
         return [$departments, $series];
     }
+
 
     private function getDepartmentEmployeePercentage()
     {
