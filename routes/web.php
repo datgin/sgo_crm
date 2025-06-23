@@ -8,6 +8,8 @@ use App\Http\Controllers\Backend\ContractTypeController;
 use App\Http\Controllers\Backend\DashboardController;
 use App\Http\Controllers\Backend\EmployeeController;
 use App\Http\Controllers\Backend\MediaItemController;
+use App\Http\Controllers\Backend\MonthlyWorkdayController;
+use App\Http\Controllers\Backend\PayrollController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -59,6 +61,13 @@ Route::middleware('admin.auth')->group(function () {
     Route::group(['prefix' => 'categorys', 'controller' => CategoryController::class, 'as' => 'categorys.'], function () {
         Route::get('/', 'index')->name('index');
         Route::post('/update-or-create', 'updateOrCreateOrDelete')->name('updateOrCreate');
+    });
+
+    Route::group(['prefix' => 'monthly-workdays', 'controller' => MonthlyWorkdayController::class, 'as' => 'monthlyWorkdays.'], function () {
+        Route::get('/', 'index')->name('index');
+        Route::post('{id}/update-workdays', [MonthlyWorkdayController::class, 'updateWorkdays']);
+
+
     });
 
 

@@ -25,6 +25,11 @@
                 "title": "Thông tin nhân sự",
                 "url": "/employees/information",
                 "active": false
+            },
+            {
+                "title": "Quản lý bảng lương",
+                "url": "/monthly-workdays",
+                "active": false
             }
         ]
     },
