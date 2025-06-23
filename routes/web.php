@@ -80,7 +80,8 @@ Route::middleware('admin.auth')->group(function () {
 
     Route::group(['prefix' => 'categorys', 'controller' => CategoryController::class, 'as' => 'categorys.'], function () {
         Route::get('/', 'index')->name('index');
-        Route::post('/update-or-create', 'updateOrCreateOrDelete')->name('updateOrCreate');
+        Route::post('/excel-save', 'updateOrCreate');
+        Route::delete('/excel-delete', 'destroy');
     });
 
 

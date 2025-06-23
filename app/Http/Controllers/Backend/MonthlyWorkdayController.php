@@ -41,7 +41,7 @@ class MonthlyWorkdayController extends Controller
             return response()->json(['data' => $data]);
         }
 
-        return view('backend.monthlyWorkdays.index', compact('month'));
+        return view('backend.monthly-workdays.index', compact('month'));
     }
 
     public function updateWorkdays(Request $request, $id)
