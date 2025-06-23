@@ -136,9 +136,9 @@ class MonthlyWorkdayController extends Controller
         $startOfMonth = Carbon::parse($month . '-01')->startOfMonth();
         $endOfMonth = Carbon::parse($month . '-01')->endOfMonth();
 
-      
+
         $validEmployees = Employee::where('employment_status_id', 2)
-            ->whereHas('contract', function ($q) use ($startOfMonth, $endOfMonth) {
+            ->whereHas('contracts', function ($q) use ($startOfMonth, $endOfMonth) {
                 $q->where(function ($contractQ) use ($startOfMonth, $endOfMonth) {
                     $contractQ->where('start_date', '<=', $endOfMonth)
                         ->where(function ($dateQ) use ($startOfMonth) {
