@@ -27,7 +27,7 @@ if (!function_exists('formatPrice')) {
 
     function formatPrice($amount, bool $showCurrency = false): string
     {
-        if (empty($amount)) return $showCurrency ? "$0 ₫" : 0;
+        if (empty($amount)) return $showCurrency ? "0 ₫" : 0;
 
         $formatted = number_format($amount, 0, ',', '.');
         return $showCurrency ? "$formatted ₫" : $formatted;

@@ -37,7 +37,7 @@ class MonthlyWorkdayController extends Controller
                     'department' => $employee->department->name ?? '',
                     'workdays' => '<input type="number" class="form-control form-control-sm workday-input"
                          data-id="' . $record->id . '" value="' . ($record->workdays ?? 0) . '" min="0" max="31">',
-                    'salary' => number_format($record->salary ?? 0) . ' VNĐ',
+                    'salary' => formatPrice($record->salary, true) ,
                     'file' => $record->file
                     ? '<a href="' . asset($record->file) . '" target="_blank">Xem file</a>'
                     : 'Chưa có'
@@ -151,7 +151,7 @@ class MonthlyWorkdayController extends Controller
         $endOfMonth = Carbon::parse($month . '-01')->endOfMonth();
 
 
-        $validEmployees = Employee::where('employment_status_id', 2)
+        $validEmployees = Employee::where('status', 1)
             ->whereHas('contracts', function ($q) use ($startOfMonth, $endOfMonth) {
                 $q->where(function ($contractQ) use ($startOfMonth, $endOfMonth) {
                     $contractQ->where('start_date', '<=', $endOfMonth)

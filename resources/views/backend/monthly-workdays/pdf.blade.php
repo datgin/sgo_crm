@@ -77,54 +77,58 @@
         Năm: {{ $year }} &nbsp;&nbsp;&nbsp;
         Số ngày làm trong tháng: {{ $monthlyWorkday->workdays }}
     </div>
-
-
-    <table>
+    <table border="1" cellpadding="5" cellspacing="0">
         <thead>
             <tr>
                 <th>Mã NV</th>
                 <th>Họ tên</th>
                 <th>Bộ phận</th>
-                <th>Lương cơ bản</th>
-                <th>Số ngày công</th>
-                <th>Ngày nghỉ</th>
-                <th>Tổng lương</th>
             </tr>
-            {{-- <tr>
-                <th>Ngày thường</th>
-            </tr> --}}
         </thead>
         <tbody>
             <tr>
-                <td>{{ $employee->code }}</td>
-                <td>{{ $employee->full_name }}</td>
-                <td>{{ $employee->department->name }}</td>
-                <td>
-
-                    @forelse ($salaryRangesForMonth as $item)
-                        <div>
-                            {{ formatPrice($item['salary'], true) }}
-                            ({{ \Carbon\Carbon::parse($item['from'])->format('d/m/Y') }}
-                            - {{ \Carbon\Carbon::parse($item['to'])->format('d/m/Y') }})
-                        </div>
-                    @empty
-                    @endforelse
-
-
-                </td>
-                <td>
-                    @forelse ($salaryRangesForMonth as $item)
-                        <div>{{ formatPrice($item['working_days_in_month']) }}</div>
-                    @empty
-                    @endforelse
-                </td>
-
-
-                <td>{{ $sum_work - $monthlyWorkday->workdays }}</td>
-                <td>{{ formatPrice($monthlyWorkday->salary, true) }}</td>
+                <td>NV01</td>
+                <td>Nguyễn Văn A</td>
+                <td>Kinh doanh</td>
             </tr>
         </tbody>
     </table>
+
+
+    <table>
+        <thead>
+            <tr>
+
+                <th rowspan="2">Lương cơ bản</th>
+                <th colspan="3">Số ngày công</th>
+
+
+                <th rowspan="2">Lương</th>
+            </tr>
+            <tr>
+                <th>Ngày thường</th>
+                <th>Làm CN</th>
+                <th>Ngày lễ</th>
+            </tr>
+        </thead>
+        <tbody>
+
+            @forelse ($salaryRangesForMonth as $item)
+                <tr>
+
+                    <td>{{ formatPrice($item['salary'], true) }}</td>
+                    <td>{{ $item['working_days_in_month'] }}</td>
+                    <td>0</td>
+                    <td>0</td>
+
+                    <td>{{ formatPrice( ($item['working_days_in_month']/$sum_work) * $item['salary'], true) }}</td>
+                </tr>
+            @empty
+            @endforelse
+
+        </tbody>
+    </table>
+
 
     <table class="footer-table">
         <thead>

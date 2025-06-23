@@ -100,8 +100,8 @@
                                     <tr>
                                         <td class="label-col">Trạng thái:</td>
                                         <td id="employeeStatus"
-                                            class="{{ $employee->employmentStatus->name == 'Nghỉ việc' ? 'text-danger' : 'text-success' }}">
-                                            {{ $employee->employmentStatus->name }}
+                                            class="{{ $employee->status != '1' ? 'text-danger' : 'text-success' }}">
+                                            {{  $employee->status == 1 ? 'Đang làm việc' : 'Đã nghỉ' }}
                                         </td>
                                     </tr>
                                     <tr>
