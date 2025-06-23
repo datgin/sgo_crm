@@ -19,7 +19,11 @@
             },
             {
                 "title": "Lịch sinh nhật",
-                "url": "/birthdays"
+                "url": "/monthly-workdays"
+            },
+            {
+                "title": "Quản lý bảng lương",
+                "url": "/monthly-workdays"
             }
         ],
         "active": ["/employees/save"]
