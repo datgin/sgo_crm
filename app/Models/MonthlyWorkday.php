@@ -13,9 +13,10 @@ class MonthlyWorkday extends Model
         'month',
         'workdays',
         'salary',
+        'file'
     ];
 
-   
+
     public function employee()
     {
         return $this->belongsTo(Employee::class);

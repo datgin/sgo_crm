@@ -31,12 +31,13 @@
                 <thead>
                     <tr>
                         <th>STT</th>
-                        <th>Mã NV</th>
+                        <th>Mã nhân viên</th>
                         <th>Tên nhân viên</th>
                         <th>Vị trí</th>
                         <th>Phòng ban</th>
                         <th>Ngày công</th>
                         <th>Tổng tiền</th>
+                        <th>File</th>
                     </tr>
                 </thead>
             </table>
@@ -91,6 +92,9 @@
                     },
                     {
                         data: 'salary'
+                    },
+                    {
+                        data: 'file'
                     },
                 ],
                 language: {
