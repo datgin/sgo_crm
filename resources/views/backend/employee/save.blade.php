@@ -146,17 +146,58 @@
                     <x-media name="albums" multiple="true" :selected="$employee->albums ?? []" />
                 </x-card> --}}
 
-                <div class="card" id="previewArea"
-                    style="{{ $employee && $employee->latestContract ? '' : 'display: none;' }}">
-                    <div class="card-header">
-                        <h4 class="card-title fs-6 fw-medium">Xem trước tài liệu</h4>
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h4 class="card-title fs-6 fw-medium mb-0">Xem trước tài liệu</h4>
+                        <button class="btn btn-sm btn-outline-secondary" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#previewCollapse" aria-expanded="false" aria-controls="previewCollapse">
+                            <i class="fas fa-eye me-1"></i> Xem tài liệu
+                        </button>
                     </div>
-                    <div class="card-body">
-                        <iframe
-                            src="{{ $employee && $employee->latestContract && $employee->latestContract->file_url ? fileExists($employee->latestContract->file_url) : '' }}"
-                            id="filePreview" width="100%" height="600px" frameborder="0"></iframe>
+
+                    <div id="previewCollapse" class="collapse">
+                        <div class="card-body">
+                            @if ($employee && $employee->latestContract && $employee->latestContract->file_url)
+                                <iframe src="{{ fileExists($employee->latestContract->file_url) }}" id="filePreview"
+                                    width="100%" height="600px" frameborder="0">
+                                </iframe>
+                            @else
+                                <div class="text-muted">Không có tài liệu để hiển thị.</div>
+                            @endif
+                        </div>
                     </div>
                 </div>
+
+
+                <x-card title="Danh sách quyền hạn">
+                    @foreach ($permissions as $groupName => $permission)
+                        <div class="card mb-3 permission">
+                            <div class="card-header d-flex justify-content-between align-items-center bg-dark text-white">
+                                <div>
+                                    <strong>{{ $groupName }}</strong>
+                                    <span class="badge bg-light text-dark ms-2">{{ count($permission) }} quyền</span>
+                                </div>
+                                <div>
+                                    <input type="checkbox" class="form-check-input select-all cursor"
+                                        id="selectAll-{{ \Str::slug($groupName) }}">
+                                    <label for="selectAll-{{ \Str::slug($groupName) }}"
+                                        class="form-check-label ms-1 text-white cursor">Chọn tất cả</label>
+                                </div>
+                            </div>
+                            <div class="card-body d-flex flex-wrap gap-3">
+                                @foreach ($permission as $item)
+                                    <div class="form-check">
+                                        <input class="form-check-input cursor" type="checkbox" name="permissions[]"
+                                            id="{{ \Str::slug($item->name) }}" value="{{ $item->name }}"
+                                            @checked(in_array($item->name, $assignedPermissions))>
+                                        <label class="form-check-label mb-0 cursor"
+                                            for="{{ \Str::slug($item->vi_name) }}">{{ $item->vi_name }}</label>
+                                    </div>
+                                @endforeach
+                            </div>
+                        </div>
+                    @endforeach
+                </x-card>
             </div>
 
             {{-- Cột phải: Avatar + tình trạng + ghi chú --}}
@@ -191,6 +232,31 @@
 @push('scripts')
     <script>
         $(function() {
+            $('.permission').each(function() {
+                const card = $(this);
+
+                const allChecked = card.find('input[type="checkbox"]:not([id^="selectAll"])').length > 0 &&
+                    card.find('input[type="checkbox"]:not([id^="selectAll"])').length ===
+                    card.find('input[type="checkbox"]:not([id^="selectAll"]):checked').length;
+
+                card.find('.select-all').prop('checked', allChecked);
+
+                // Sự kiện khi nhấn "Chọn tất cả"
+                card.find('.select-all').on('change', function() {
+                    const isChecked = $(this).is(':checked');
+                    card.find('input[type="checkbox"]:not([id^="selectAll"])').prop('checked',
+                        isChecked);
+                });
+
+                // Sự kiện khi checkbox con thay đổi
+                card.find('input[type="checkbox"]:not([id^="selectAll"])').on('change', function() {
+                    const allChecked = card.find('input[type="checkbox"]:not([id^="selectAll"])')
+                        .length ===
+                        card.find('input[type="checkbox"]:not([id^="selectAll"]):checked').length;
+                    card.find('.select-all').prop('checked', allChecked);
+                });
+            });
+
             // formValidator.set({
             //     code: "nullable|max:50",
             //     full_name: 'required|max:255',
@@ -276,4 +342,3 @@
         })
     </script>
 @endpush
-

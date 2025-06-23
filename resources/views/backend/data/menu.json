@@ -18,13 +18,12 @@
                 "url": "/employees/information"
             },
             {
-                "title": "Quản lý bảng lương",
-                "url": "/monthly-workdays",
-                "active": false
+                "title": "Lịch sinh nhật",
+                "url": "/monthly-workdays"
             },
             {
-                "title": "Sinh nhật",
-                "url": "/birthdays"
+                "title": "Quản lý bảng lương",
+                "url": "/monthly-workdays"
             }
         ],
         "active": ["/employees/save"]
@@ -43,14 +42,9 @@
                 "url": "/contactTypes"
             },
             {
-                "title": "Hạng mục",
+                "title": "Danh mục hệ thống",
                 "url": "/categorys"
             }
         ]
-    },
-    {
-        "title": "Quyền hạn",
-        "icon": "fas fa-user-shield",
-        "url": "/permissions"
     }
 ]
