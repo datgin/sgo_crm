@@ -89,25 +89,39 @@
 
     <div class="row">
         <div class="col-lg-6">
-            <div id="chart-container"></div>
+            <div id="chart-container" class="chart-box"></div>
         </div>
         <div class="col-lg-6">
-            <div id="department-percentage-pie"></div>
+            <div id="department-percentage-pie" class="chart-box"></div>
         </div>
         <div class="col-lg-6">
-            <div id="gender-bar-chart"></div>
+            <div id="gender-bar-chart" class="chart-box"></div>
         </div>
         <div class="col-lg-6">
-            <div id="education-level-chart"></div>
+            <div id="education-level-chart" class="chart-box"></div>
         </div>
         <div class="col-lg-6">
-            <div id="contract-type-chart"></div>
+            <div id="contract-type-chart" class="chart-box"></div>
         </div>
         <div class="col-lg-6">
-            <div id="seniority-chart"></div>
+            <div id="seniority-chart" class="chart-box"></div>
         </div>
     </div>
 @endsection
+
+@push('styles')
+    <style>
+        .chart-box {
+            border: 1px solid #dee2e6;
+            /* màu viền nhẹ */
+            border-radius: 8px;
+            padding: 8px;
+            margin-bottom: 20px;
+            background-color: #fff;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+    </style>
+@endpush
 
 @push('scripts')
     <script src="https://code.highcharts.com/highcharts.js"></script>

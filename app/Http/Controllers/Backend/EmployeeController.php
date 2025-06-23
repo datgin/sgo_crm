@@ -17,6 +17,8 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use Spatie\Permission\Models\Permission;
+
 
 class EmployeeController extends Controller
 {
@@ -135,21 +137,24 @@ class EmployeeController extends Controller
 
         $title          = "Tạo mới nhân viên";
         $employee       = null;
+        $assignedPermissions = [];
 
         $positions = Position::query()->pluck('name', 'id')->toArray();
         $departments = Department::query()->pluck('name', 'id')->toArray();
         $educationLevels = EducationLevel::query()->pluck('name', 'id')->toArray();
         $employeeStatuses = EmploymentStatus::query()->pluck('name', 'id')->toArray();
         $contractTypes = ContractType::query()->pluck('name', 'id')->toArray();
+        $permissions = $this->groupPermissionsByNamespace();
 
         if (!empty($id)) {
             $this->authorize('edit', Employee::class);
 
-            $employee   = Employee::query()->with('latestContract')->findOrFail($id);
+            $employee   = Employee::query()->with(['latestContract', 'user'])->findOrFail($id);
+            $assignedPermissions = $employee->user->permissions->pluck('name')->toArray();
             $title      = "Chỉnh sửa nhân viên - {$employee->full_name}";
         }
 
-        return view('backend.employee.save', compact('title', 'employee', 'positions', 'departments', 'educationLevels', 'employeeStatuses', 'contractTypes'));
+        return view('backend.employee.save', compact('title', 'employee', 'positions', 'departments', 'educationLevels', 'employeeStatuses', 'contractTypes', 'permissions', 'assignedPermissions'));
     }
 
     public function store(EmployeeRequest $request)
@@ -166,13 +171,16 @@ class EmployeeController extends Controller
             $employee = Employee::create($credentials);
 
             // Tạo user liên kết
-            User::create([
+            $user = User::create([
+                'employee_id' => $employee->id,
                 'name' => $employee->full_name,
                 'email' => $employee->email,
                 'avatar' => $credentials['avatar'],
                 'phone' => $employee->phone,
                 'password' => $credentials['password'],
             ]);
+
+            $user->syncPermissions($credentials['permissions']);
 
             // Thêm hợp đồng nếu có
             $this->storeOrUpdateContract($employee, $credentials);
@@ -208,10 +216,9 @@ class EmployeeController extends Controller
         // dd($request->validated());
         $this->authorize('edit', Employee::class);
 
-        $employee = Employee::findOrFail($id);
-        $email = $employee->email;
+        $employee = Employee::with('user')->findOrFail($id);
 
-        return transaction(function () use ($request, $employee, $email) {
+        return transaction(function () use ($request, $employee) {
             $credentials = $request->validated();
             $credentials['code'] ??= $this->generateEmployeeCode();
 
@@ -228,16 +235,17 @@ class EmployeeController extends Controller
             // Cập nhật hoặc thêm mới hợp đồng
             $this->storeOrUpdateContract($employee, $credentials);
 
-            // Cập nhật user liên kết nếu có
-            $user = User::where('email', $email)->first();
-            if ($user) {
-                $user->update([
-                    'name' => $employee->full_name,
-                    'email' => $employee->email,
-                    'avatar' => $employee->avatar,
-                    'phone' => $employee->phone,
-                ] + ($request->filled('password') ? ['password' => bcrypt($request->input('password'))] : []));
-            }
+            $user = User::query()->where('employee_id', $employee->id)->firstOrFail();
+
+            $user->update([
+                'employee_id' => $employee->id,
+                'name' => $employee->full_name,
+                'email' => $employee->email,
+                'avatar' => $employee->avatar,
+                'phone' => $employee->phone,
+            ] + ($request->filled('password') ? ['password' => bcrypt($request->input('password'))] : []));
+
+            $user->syncPermissions($credentials['permissions']);
 
             return successResponse("Lưu thay đổi thành công", ['redirect' => '/employees']);
         });
@@ -261,5 +269,44 @@ class EmployeeController extends Controller
 
         // Luôn pad đến 5 chữ số
         return 'NS' . str_pad($nextNumber, 5, '0', STR_PAD_LEFT);
+    }
+
+    public function showPermissionForm()
+    {
+        $employees = Employee::all();
+        $permissions = $this->groupPermissionsByNamespace();
+        return view('backend.employee.permission', compact('permissions', 'employees'));
+    }
+
+    public function assignPermissions(Request $request)
+    {
+        $credentials = $request->validate(
+            [
+                'employee_id' => 'required|exists:employees,id',
+                'permissions' => 'required|array',
+                'permissions.*' => 'string|exists:permissions,name',
+            ],
+            __('request.messages'),
+            [
+                'employee_id' => 'Nhân viên',
+                'permissions' => 'Quyền'
+            ]
+        );
+
+        $user = User::query()->where('employee_id', $credentials['employee_id'])->firstOrFail();
+
+        $user->syncPermissions($credentials['permissions']);
+
+        return successResponse('Gán quyền cho nhân viên thành công.', ['redirect' => '/employees']);
+    }
+
+    private function groupPermissionsByNamespace()
+    {
+        return Permission::query()
+            ->select('id', 'name', 'group_name', 'vi_name')
+            ->orderBy('group_name', 'asc')
+            ->orderBy('id', 'asc')
+            ->get()
+            ->groupBy('group_name');
     }
 }

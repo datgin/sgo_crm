@@ -1,14 +1,22 @@
 <?php
 
+use Illuminate\Support\Str;
+
 if (!function_exists('isMenuActive')) {
     function isMenuActive($item, $currentUrl)
     {
-        // Ghép children + active nếu có
         $activeList = collect($item['children'] ?? [])->pluck('url')->toArray();
         $activeList = array_merge($activeList, $item['active'] ?? []);
 
-        // Nếu URL hiện tại khớp url chính hoặc url con
-        return in_array("/$currentUrl", $activeList) || ($item['url'] !== 'javascript:void(0)' && $currentUrl === ltrim($item['url'], '/'));
+        // Nếu currentUrl khớp chính xác hoặc bắt đầu bằng các URL trong danh sách
+        foreach ($activeList as $active) {
+            if (Str::startsWith("/$currentUrl", $active)) {
+                return true;
+            }
+        }
+
+        // Nếu url chính không phải javascript và trùng current url
+        return ($item['url'] !== 'javascript:void(0)' && $currentUrl === ltrim($item['url'], '/'));
     }
 }
 

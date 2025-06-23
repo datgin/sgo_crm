@@ -24,7 +24,8 @@ class User extends Authenticatable
         'password',
         'avatar',
         'phone',
-        'is_admin'
+        'is_admin',
+        'employee_id'
     ];
 
     /**
@@ -45,6 +46,11 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function employee()
+    {
+        return $this->belongsTo(Employee::class);
+    }
 
     public function isAdmin()
     {
