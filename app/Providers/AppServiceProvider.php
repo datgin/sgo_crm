@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Models\Setting;
+use App\Models\User;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 
@@ -27,9 +28,21 @@ class AppServiceProvider extends ServiceProvider
             if ($shared) return;
             $shared = true;
 
+            $user = auth('admin')->user(); // vì bạn dùng guard admin
+            /**
+             * @var User $user /
+             */
+            $notifications = $user->notifications()->take(10)->get();
+            // dd($notifications);
+            $unreadCount = $user->unreadNotifications()->count();
+
             $setting = Setting::query()->firstOrCreate();
 
-            View::share(['setting' => $setting]);
+            View::share([
+                'setting' => $setting,
+                'notifications' => $notifications,
+                'unreadCount' => $unreadCount
+            ]);
         });
     }
 }
