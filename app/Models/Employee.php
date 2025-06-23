@@ -5,12 +5,10 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
-use Spatie\Permission\Traits\HasRoles;
 
 class Employee extends Model
 {
-    use HasFactory, HasRoles;
-
+    use HasFactory;
 
     protected $fillable = [
         'position_id',
@@ -20,7 +18,6 @@ class Employee extends Model
         'code',
         'full_name',
         'email',
-        'password',
         'avatar',
         'phone',
         'address',
@@ -32,7 +29,8 @@ class Employee extends Model
         'university_end_date',
         'resignation_date',
         'notes',
-        'status'
+        'status',
+        'albums'
     ];
 
     public function position()
@@ -54,9 +52,15 @@ class Employee extends Model
     {
         return $this->belongsTo(EmploymentStatus::class);
     }
-    public function contract()
+
+    public function contracts()
     {
-        return $this->hasOne(Contract::class);
+        return $this->hasMany(Contract::class);
+    }
+
+    public function latestContract()
+    {
+        return $this->hasOne(Contract::class)->latestOfMany();
     }
 
     protected $casts = [
@@ -65,45 +69,25 @@ class Employee extends Model
         'university_start_date' => 'date',
         'university_end_date' => 'date',
         'resignation_date' => 'date',
-        'status' => 'boolean'
+        'status' => 'boolean',
+        'albums' => 'array'
     ];
-
-    public function getNameCodeAttribute()
-    {
-        return "$this->full_name - $this->code";
-    }
 
     public function getAgeAttribute()
     {
         if (!$this->birthday) {
-            return null;
+            return '<small class="text-muted">Chưa cập nhật...</small>';
         }
 
         return Carbon::now()->diffInYears(Carbon::parse($this->birthday));
     }
 
-    public function getDaysLeftForUniversityAttribute(): ?string
-    {
-        if (!$this->university_end_date) {
-            return null; // hoặc trả "Chưa cập nhật"
-        }
-
-        $endDate = Carbon::parse($this->university_end_date);
-        $now = Carbon::now();
-
-        if ($endDate->isPast()) {
-            return "Đã kết thúc";
-        }
-
-        return $now->diffInDays($endDate) . ' ngày';
-    }
-
     public function getSeniorityAttribute(): string
     {
 
-        $contract = $this->contract;
+        $contract = $this->latestContract;
         if (!$contract || !$contract->start_date) {
-            return 'Chưa xác định';
+            return '<small class="text-muted">Không xác định</small>';
         }
 
         $start = Carbon::parse($contract->start_date);
@@ -136,9 +120,9 @@ class Employee extends Model
 
     public function getSeniorityDetailAttribute(): string
     {
-        $contract = $this->contract;
+        $contract = $this->latestContract;
         if (!$contract || !$contract->start_date) {
-            return 'Chưa xác định';
+            return '<small class="text-muted">Không xác định</small>';
         }
 
         $start = Carbon::parse($contract->start_date);
@@ -168,16 +152,16 @@ class Employee extends Model
 
     public function getStartDateAttribute()
     {
-        return $this->contract && $this->contract->start_date ? $this->contract->start_date->format('d-m-Y') : '<span class="text-muted">Chưa xác định</span>';
+        return $this->latestContract && $this->latestContract->start_date ? $this->latestContract->start_date->format('d-m-Y') : '<span class="text-muted">Chưa xác định</span>';
     }
 
     public function getEndDateAttribute()
     {
-        return $this->contract && $this->contract->end_date ? $this->contract->end_date->format('d-m-Y') : '<span class="text-muted">Chưa xác định</span>';
+        return $this->latestContract && $this->latestContract->end_date ? $this->latestContract->end_date->format('d-m-Y') : '<span class="text-muted">Chưa xác định</span>';
     }
     public function getContractTypeAttribute()
     {
-        return $this->contract && $this->contract->contractType ? $this->contract->contractType->name : '<span class="text-muted">Chưa xác định</span>';
+        return $this->latestContract && $this->latestContract->contractType ? $this->latestContract->contractType->name : '<span class="text-muted">Chưa xác định</span>';
     }
 
     protected static function booted()

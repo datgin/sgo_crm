@@ -1,12 +1,4 @@
 const columns = [
-    // {
-    //     data: "full_name_code",
-    //     name: "full_name_code",
-    //     title: "",
-    //     orderable: false,
-    //     searchable: false,
-    //     width: "5%",
-    // },
     {
         data: "DT_RowIndex",
         name: "DT_RowIndex",
@@ -46,6 +38,9 @@ const columns = [
         data: "phone",
         name: "phone",
         title: "Số điện thoại",
+        render(data, type, row) {
+            return data || '<small class="text-muted">Chưa cập nhật...</small>';
+        },
     },
     {
         data: "email",
@@ -57,6 +52,8 @@ const columns = [
         data: "address",
         name: "address",
         title: "Địa chỉ tạm trú",
+        render: (data) =>
+            data || '<small class="text-muted">Chưa cập nhật...</small>',
     },
     {
         data: "birthday",
@@ -98,7 +95,7 @@ const columns = [
         title: "Số CCCD",
         searchable: false,
         render: function (data, type, row, meta) {
-            if (!data) return "";
+            if (!data) return '<small class="text-muted">Chưa cập nhật...</small>';
             return data.substring(0, 2) + "x".repeat(data.length - 2);
         },
         orderable: false,
@@ -117,33 +114,6 @@ const columns = [
         data: "education_level",
         name: "education_level",
         title: "Trình độ học vấn",
-        orderable: false,
-        searchable: false,
-    },
-    {
-        data: "university_start_date",
-        name: "university_start_date",
-        title: "Thời gian vào ĐH",
-        render: function (data) {
-            return formatDate(data, "DD-MM-YYYY");
-        },
-        orderable: false,
-        searchable: false,
-    },
-    {
-        data: "university_end_date",
-        name: "university_end_date",
-        title: "Kết thúc ĐH",
-        render: function (data) {
-            return formatDate(data, "DD-MM-YYYY");
-        },
-        orderable: false,
-        searchable: false,
-    },
-    {
-        data: "days_left_for_university",
-        name: "days_left_for_university",
-        title: "Số ngày còn lại của ĐH",
         orderable: false,
         searchable: false,
     },
@@ -198,7 +168,7 @@ const columns = [
         name: "notes",
         title: "Ghi chú",
         render: function (data) {
-            return data ?? '<span class="text-muted">NA</span>';
+            return data ?? '<small class="text-muted">Chưa cập nhật...</small>';
         },
         orderable: false,
         searchable: false,

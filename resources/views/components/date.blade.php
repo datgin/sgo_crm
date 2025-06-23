@@ -53,4 +53,4 @@
             });
         });
     </script>
-@endpush
+@endPush

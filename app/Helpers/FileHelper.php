@@ -6,13 +6,35 @@ use Intervention\Image\ImageManager;
 
 
 if (!function_exists('showImage')) {
-    function showImage($image)
+    function showImage(?string $absoluteUrl): string
+    {
+        if (!$absoluteUrl) {
+            return asset('assets/backend/images/image-default.png');
+        }
+
+        $parsedPath = parse_url($absoluteUrl, PHP_URL_PATH);
+        $relativePath = ltrim(str_replace('/storage/', '', $parsedPath), '/');
+
+        /** @var \Illuminate\Contracts\Filesystem\Filesystem|\Illuminate\Filesystem\FilesystemAdapter $storage */
+        $storage = Storage::disk('public');
+
+        if ($storage->exists($relativePath)) {
+            return $absoluteUrl;
+            // return $storage->url($relativePath);
+        }
+
+        return asset('assets/backend/images/image-default.png');
+    }
+}
+
+if (!function_exists('fileExists')) {
+    function fileExists(?string $relativePath): ?string
     {
         /** @var FilesystemAdapter $storage */
         $storage = Storage::disk('public');
 
-        if ($image && $storage->exists($image)) {
-            return $storage->url($image);
+        if ($relativePath && $storage->exists($relativePath)) {
+            return $storage->url($relativePath);
         }
 
         return asset('assets/backend/images/image-default.png');
@@ -67,5 +89,21 @@ if (!function_exists('uploadImages')) {
         }
 
         return $isArray ? $paths : $paths[0] ?? null;
+    }
+}
+
+
+if (!function_exists('uploadPdf')) {
+    function uploadPdf(string $fieldName, string $directory = 'documents'): ?string
+    {
+        $file = request()->file($fieldName);
+
+        if ($file && $file->isValid() && $file->getClientOriginalExtension() === 'pdf') {
+            $filename = time() . uniqid() . '.pdf';
+            $path = $file->storeAs($directory, $filename, 'public');
+            return $path; // Đường dẫn tính từ public disk
+        }
+
+        return null; // Không có file hoặc không hợp lệ
     }
 }

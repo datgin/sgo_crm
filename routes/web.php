@@ -8,8 +8,12 @@ use App\Http\Controllers\Backend\ContractTypeController;
 use App\Http\Controllers\Backend\DashboardController;
 use App\Http\Controllers\Backend\EmployeeController;
 use App\Http\Controllers\Backend\MediaItemController;
+
 use App\Http\Controllers\Backend\MonthlyWorkdayController;
 use App\Http\Controllers\Backend\PayrollController;
+use App\Http\Controllers\Backend\PermissionController;
+use App\Http\Controllers\Backend\SettingController;
+
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -29,6 +33,8 @@ Route::middleware('admin.auth')->group(function () {
 
     Route::post('handle-bulk-action', [BulkActionController::class, 'handleBulkAction']);
 
+    Route::get('logout', [AuthController::class, 'logout']);
+
     Route::group(['prefix' => 'employees', 'controller' => EmployeeController::class, 'as' => 'employees.'], function () {
         Route::get('/', 'index');
         Route::get('save/{id?}', 'save');
@@ -38,9 +44,21 @@ Route::middleware('admin.auth')->group(function () {
         Route::get('/information', 'information')->name('information');
     });
 
+    Route::group([
+        'prefix' => 'permissions',
+        'controller' => PermissionController::class,
+        'as' => 'permissions.'
+    ], function () {
+        Route::get('/', 'index');
+        Route::get('{id}', 'show');
+        Route::post('/', 'store');
+        Route::put('/', 'update');
+    });
+
     Route::group(['prefix' => 'media', 'controller' => MediaItemController::class], function () {
         Route::get('/', 'list');
         Route::post('upload', 'upload');
+        Route::delete('destroy', 'destroy');
     });
 
 
@@ -63,6 +81,7 @@ Route::middleware('admin.auth')->group(function () {
         Route::post('/update-or-create', 'updateOrCreateOrDelete')->name('updateOrCreate');
     });
 
+
     Route::group(['prefix' => 'monthly-workdays', 'controller' => MonthlyWorkdayController::class, 'as' => 'monthlyWorkdays.'], function () {
         Route::get('/', 'index')->name('index');
         Route::post('{id}/update-workdays', [MonthlyWorkdayController::class, 'updateWorkdays']);
@@ -70,6 +89,12 @@ Route::middleware('admin.auth')->group(function () {
 
     });
 
+
+
+    Route::group(['prefix' => 'settings', 'controller' => SettingController::class], function () {
+        Route::get('/', 'index');
+        Route::post('/', 'save');
+    });
 
 });
 

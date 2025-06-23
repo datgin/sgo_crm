@@ -10,6 +10,7 @@ use Intervention\Image\Facades\Image;
 
 class MediaItemController extends Controller
 {
+
     public function list(Request $request)
     {
         $query = MediaItem::with('media')->latest();
@@ -18,7 +19,7 @@ class MediaItemController extends Controller
             $query->where('name', 'like', '%' . $search . '%');
         }
 
-        $mediaItems = $query->paginate(20);
+        $mediaItems = $query->paginate(12);
 
         return response()->json([
             'data' => $mediaItems->map(function ($item) {
@@ -26,18 +27,20 @@ class MediaItemController extends Controller
 
                 if (!$media) return null;
 
-                // Lấy kích thước ảnh (nếu chưa có sẵn trong custom_properties)
+                // Lấy thông tin kích thước từ custom_properties (nếu đã có)
                 $width = $media->getCustomProperty('width');
                 $height = $media->getCustomProperty('height');
 
-                // Nếu chưa có, dùng Intervention để lấy
+                // Nếu chưa có, dùng Intervention để lấy kích thước
                 if (!$width || !$height) {
                     try {
-                        $image = Image::make(Storage::path($media->getPath()));
+                        // Cách đúng: dùng getPath() vì đã là đường dẫn đầy đủ
+                        $image = Image::make($media->getPath());
+
                         $width = $image->width();
                         $height = $image->height();
 
-                        // Lưu lại để lần sau khỏi load nữa
+                        // Lưu lại vào custom_properties
                         $media->setCustomProperty('width', $width);
                         $media->setCustomProperty('height', $height);
                         $media->save();
@@ -55,7 +58,7 @@ class MediaItemController extends Controller
                     'width' => $width,
                     'height' => $height,
                 ];
-            })->filter()->values(), // lọc bỏ null
+            })->filter()->values(), // lọc null nếu media không tồn tại
             'pagination' => [
                 'total' => $mediaItems->total(),
                 'current_page' => $mediaItems->currentPage(),
@@ -89,6 +92,33 @@ class MediaItemController extends Controller
         return response()->json([
             'message' => 'Tải ảnh thành công!',
             'data' => $uploaded
+        ]);
+    }
+
+    public function destroy(Request $request)
+    {
+        $request->validate([
+            'ids' => 'required|array',
+            'ids.*' => 'integer|exists:media_items,id',
+        ]);
+
+        $deletedCount = 0;
+
+        foreach ($request->ids as $id) {
+            $mediaItem = MediaItem::find($id);
+
+            if ($mediaItem) {
+                // Xoá file vật lý và bản ghi trong media table
+                $mediaItem->clearMediaCollection('images');
+
+                // Xoá bản ghi media_item
+                $mediaItem->delete();
+                $deletedCount++;
+            }
+        }
+
+        return response()->json([
+            'message' => "Đã xoá {$deletedCount} ảnh thành công.",
         ]);
     }
 }

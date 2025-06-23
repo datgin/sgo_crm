@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('contracts', function (Blueprint $table) {
-            $table->decimal('salary', 15, 0)->default(null);
+            $table->decimal('salary', 15, 0)->after('file_url')->default(null);
         });
     }
 

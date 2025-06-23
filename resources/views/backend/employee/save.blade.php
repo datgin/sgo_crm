@@ -2,7 +2,13 @@
 
 
 @section('content')
-    <x-breadcrumb />
+    @php
+        $breadcrumbs = [
+            ['label' => 'Nhân viên', 'url' => '/employees'],
+            ['label' => $employee ? "Cập nhật nhân viên - $employee->full_name" : 'Tạo mới nhân viên'],
+        ];
+    @endphp
+    <x-breadcrumb :breadcrumbs="$breadcrumbs" />
 
     <x-page-header :title="$title" />
 
@@ -35,8 +41,9 @@
                             </div>
 
                             <div class="col-md-6">
-                                <x-input type="password" name="password" id="password"
-                                    label="Mật khẩu mới (bỏ qua nếu không đổi)" placeholder="Mật khẩu" />
+                                <x-input type="password" required="true" name="password" id="password"
+                                    label="Mật khẩu {{ $employee ? 'mới (bỏ qua nếu không đổi)' : '' }}"
+                                    placeholder="Mật khẩu" />
                             </div>
 
                             <div class="col-md-6">
@@ -70,20 +77,6 @@
                             </div>
 
                             <div class="col-md-6">
-                                <x-date name="university_start_date" id="university_start_date" label="Ngày nhập học"
-                                    :value="$employee && $employee->university_start_date
-                                        ? $employee->university_start_date->format('d-m-Y')
-                                        : ''" />
-                            </div>
-
-                            <div class="col-md-6">
-                                <x-date name="university_end_date" id="university_end_date" label="Ngày tốt nghiệp"
-                                    :value="$employee && $employee->university_end_date
-                                        ? $employee->university_end_date->format('d-m-Y')
-                                        : ''" />
-                            </div>
-
-                            <div class="col-md-6">
                                 <x-select label="Chức vụ" :value="$employee->position_id ?? ''" name="position_id" :options="$positions" />
                             </div>
 
@@ -102,7 +95,66 @@
                                         ? $employee->resignation_date->format('d-m-Y')
                                         : ''" />
                             </div>
+
+                            <div class="col-md-6">
+                                <x-select label="Loại hợp động" name="contract_type_id" :value="$employee && $employee->latestContract
+                                    ? $employee->latestContract->contract_type_id
+                                    : ''"
+                                    :options="$contractTypes" />
+                            </div>
+
+                            <div class="col-md-6">
+                                <x-input name="salary" id="salary" class="format-price" label="Mức lương"
+                                    value="{{ formatPrice($employee->latestContract?->salary ?? '') }}" />
+                            </div>
+
+                            <div class="col-md-6">
+                                <x-date name="start_date" id="start_date" label="Ngày bắt đầu hợp đồng"
+                                    :value="$employee &&
+                                    $employee->latestContract &&
+                                    $employee->latestContract->start_date
+                                        ? $employee->latestContract->start_date->format('d-m-Y')
+                                        : ''" />
+                            </div>
+
+                            <div class="col-md-6">
+                                <x-date name="end_date" id="end_date" label="Ngày kết thúc hợp đồng" :value="$employee && $employee->latestContract && $employee->latestContract->end_date
+                                    ? $employee->latestContract->end_date->format('d-m-Y')
+                                    : ''" />
+                            </div>
+
+                            <div class="col-md-12">
+                                <label for="fileName" class="form-label fw-medium">
+                                    Tải hợp đồng file (PDF)
+                                </label>
+
+                                <div class="input-group">
+                                    <label for="fileInput" class="btn btn-outline-primary">
+                                        <i class="fas fa-file-upload"></i> Chọn tệp
+                                    </label>
+                                    <input type="file" name="file_url" id="fileInput" class="d-none" accept=".pdf">
+                                    <input type="text" id="fileName" class="form-control"
+                                        placeholder="{{ $employee && $employee->latestContract ? basename($employee->latestContract->file_url) : 'Chưa chọn file nào ' }}"
+                                        readonly>
+                                </div>
+                            </div>
                         </div>
+                    </div>
+                </div>
+
+                {{-- <x-card title="Albums" class="text-center">
+                    <x-media name="albums" multiple="true" :selected="$employee->albums ?? []" />
+                </x-card> --}}
+
+                <div class="card" id="previewArea"
+                    style="{{ $employee && $employee->latestContract ? '' : 'display: none;' }}">
+                    <div class="card-header">
+                        <h4 class="card-title fs-6 fw-medium">Xem trước tài liệu</h4>
+                    </div>
+                    <div class="card-body">
+                        <iframe
+                            src="{{ $employee && $employee->latestContract && $employee->latestContract->file_url ? fileExists($employee->latestContract->file_url) : '' }}"
+                            id="filePreview" width="100%" height="600px" frameborder="0"></iframe>
                     </div>
                 </div>
             </div>
@@ -113,7 +165,7 @@
                 <x-submit />
 
                 <x-card title="Ảnh 3x4" class="text-center">
-                    <x-file name="avatar" :value="$employee->avatar ?? showImage('')" />
+                    <x-media name="avatar" :selected="$employee->avatar ?? []" />
                 </x-card>
 
                 <x-card title="Tình trạng làm việc">
@@ -126,55 +178,58 @@
                 </x-card>
 
                 <x-card title="Trạng thái">
-                    <x-switch-checkbox :checked="$employee->status ?? false" />
+                    <x-switch-checkbox :checked="$employee->status ?? true" />
                 </x-card>
+
             </div>
         </div>
     </form>
+
+    <x-media-popup />
 @endsection
 
 @push('scripts')
     <script>
         $(function() {
-            formValidator.set({
-                code: "nullable|max:50",
-                full_name: 'required|max:255',
-                email: 'required|email|max:255',
-                password: `{{ isset($employee) ? 'nullable' : 'required' }}|min:8|max:255|regex:^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[\\W_]).{8,}$`,
-                phone: 'nullable|regex:^0\\d{9}$',
-                address: 'nullable|max:255',
-                birthday: 'nullable|date_format:d-m-Y|before_today',
-                gender: 'required|in:male,female,other',
-                cccd: 'nullable|numeric|digits_between:9,12',
-                cccd_issued_date: 'nullable|date_format:d-m-Y|before_or_equal:today',
-                university_start_date: 'nullable|date_format:d-m-Y',
-                university_end_date: 'nullable|date_format:d-m-Y|after_or_equal:university_start_date',
-                position_id: 'required',
-                department_id: 'required',
-                education_level_id: 'required',
-                employment_status_id: 'required',
-                resignation_date: 'nullable|date_format:d-m-Y|after_or_equal:birthday',
-                notes: 'nullable|max:1000',
-                avatar: "required|file|mimes:jpeg,png,jpg,webp|max_size:2048"
-            }, {
-                code: "Mã nhân viên",
-                full_name: "Họ tên",
-                phone: "Số điện thoại",
-                address: "Địa chỉ",
-                birthday: "Ngày sinh",
-                gender: "Giới tính",
-                cccd: "Số CCCD",
-                cccd_issued_date: "Ngày cấp CCCD",
-                university_start_date: "Ngày bắt đầu đại học",
-                university_end_date: "Ngày kết thúc đại học",
-                position_id: "Vị trí",
-                department_id: "Phòng ban",
-                education_level_id: "Trình độ học vấn",
-                employment_status_id: "Tình trạng làm việc",
-                resignation_date: "Ngày nghỉ việc",
-                notes: "Ghi chú",
-                avatar: "Ảnh đại diện"
-            });
+            // formValidator.set({
+            //     code: "nullable|max:50",
+            //     full_name: 'required|max:255',
+            //     email: 'required|email|max:255',
+            //     password: `{{ isset($employee) ? 'nullable' : 'required' }}|min:8|max:255|regex:^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[\\W_]).{8,}$`,
+            //     phone: 'nullable|regex:^0\\d{9}$',
+            //     address: 'nullable|max:255',
+            //     birthday: 'nullable|date_format:d-m-Y|before_today',
+            //     gender: 'required|in:male,female,other',
+            //     cccd: 'nullable|numeric|digits_between:9,12',
+            //     cccd_issued_date: 'nullable|date_format:d-m-Y|before_or_equal:today',
+            //     university_start_date: 'nullable|date_format:d-m-Y',
+            //     university_end_date: 'nullable|date_format:d-m-Y|after_or_equal:university_start_date',
+            //     position_id: 'required',
+            //     department_id: 'required',
+            //     education_level_id: 'required',
+            //     employment_status_id: 'required',
+            //     resignation_date: 'nullable|date_format:d-m-Y|after_or_equal:birthday',
+            //     notes: 'nullable|max:1000',
+            //     avatar: "{{ isset($employee) ? 'nullable' : 'required' }}|file|mimes:jpeg,png,jpg,webp|max_size:2048"
+            // }, {
+            //     code: "Mã nhân viên",
+            //     full_name: "Họ tên",
+            //     phone: "Số điện thoại",
+            //     address: "Địa chỉ",
+            //     birthday: "Ngày sinh",
+            //     gender: "Giới tính",
+            //     cccd: "Số CCCD",
+            //     cccd_issued_date: "Ngày cấp CCCD",
+            //     university_start_date: "Ngày bắt đầu đại học",
+            //     university_end_date: "Ngày kết thúc đại học",
+            //     position_id: "Vị trí",
+            //     department_id: "Phòng ban",
+            //     education_level_id: "Trình độ học vấn",
+            //     employment_status_id: "Tình trạng làm việc",
+            //     resignation_date: "Ngày nghỉ việc",
+            //     notes: "Ghi chú",
+            //     avatar: "Ảnh đại diện"
+            // });
 
             $(document).on('click', '.toggle-password', function() {
                 const input = $($(this).attr('toggle'));
@@ -191,6 +246,34 @@
             submitForm("#myForm", function(response) {
                 window.location.href = response.data.redirect
             });
+
+            $('#fileInput').on('change', function(e) {
+                const file = e.target.files[0];
+                const preview = $('#filePreview');
+
+                if (file) {
+
+                    $('#fileName').val(file.name);
+
+                    const fileType = file.type;
+                    const fileName = file.name.toLowerCase();
+                    const blobURL = URL.createObjectURL(file);
+
+                    if (fileType === 'application/pdf' || fileName.endsWith('.pdf')) {
+                        preview.attr('src', blobURL);
+                        $('#previewArea').show();
+                    } else if (fileName.endsWith('.docx')) {
+                        alert(
+                            "DOCX không thể xem trực tiếp — cần upload lên server để dùng Google Docs Viewer."
+                        );
+                        $('#previewArea').hide();
+                    } else {
+                        alert('Chỉ hỗ trợ file PDF hoặc DOCX.');
+                        $('#previewArea').hide();
+                    }
+                }
+            });
         })
     </script>
 @endpush
+

@@ -13,8 +13,6 @@ return new class extends Migration
     {
         Schema::table('employees', function (Blueprint $table) {
             $table->string('email')->unique()->after('full_name');
-            $table->string('password')->after('email');
-            $table->rememberToken()->after('password');
             $table->boolean('status')->after('notes');
         });
     }

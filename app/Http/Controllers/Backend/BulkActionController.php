@@ -12,24 +12,20 @@ class BulkActionController extends Controller
     {
         $type = request()->input('type');
 
-        $credentials = Validator::make($request->all(), [
+        $credentials = $request->validate([
             'model' => 'required|string',
             'ids' => 'required',
-        ], [], [
+        ], __('request.messages'), [
             'model' => 'Tên model',
             'ids' => 'Danh sách ID',
         ]);
 
-        if ($credentials->fails()) {
-            return response()->json([
-                'success' => false,
-                'message' => $credentials->errors()->first()
-            ], 422);
-        }
+        $customModels = [
+            'Permission' => \Spatie\Permission\Models\Permission::class,
+            'Role'       => \Spatie\Permission\Models\Role::class,
+        ];
 
-        $credentials = $credentials->validated();
-
-        $modelClass = "App\\Models\\" . $credentials['model'];
+        $modelClass = $customModels[$credentials['model']] ?? "App\\Models\\" . $credentials['model'];
 
         // Kiểm tra xem class có tồn tại hay không
         if (!class_exists($modelClass)) {

@@ -2,10 +2,12 @@
 
 namespace App\Http\Requests;
 
+use App\Traits\ValidatesMediaPaths;
 use Illuminate\Foundation\Http\FormRequest;
 
 class EmployeeRequest extends FormRequest
 {
+    use ValidatesMediaPaths;
     /**
      * Determine if the user is authorized to make this request.
      */
@@ -22,6 +24,7 @@ class EmployeeRequest extends FormRequest
     public function rules(): array
     {
         $id = $this->route('id', null);
+        $hasContract = $this->filled('contract_type_id');
 
         return [
             'code' => ['nullable', 'string', 'max:50', "unique:employees,code,{$id}"],
@@ -39,10 +42,19 @@ class EmployeeRequest extends FormRequest
             'position_id' => ['required', 'exists:positions,id'],
             'department_id' => ['required', 'exists:departments,id'],
             'education_level_id' => ['required', 'exists:education_levels,id'],
+
+            'contract_type_id' => ['nullable', 'exists:contract_types,id'],
+            'file_url'         => $id && $hasContract ? ['nullable'] : ['required', 'file', 'mimes:pdf', 'max:10240'],
+            'start_date'       => $hasContract ? ['required', 'date_format:d-m-Y'] : ['nullable'],
+            'end_date'         => $hasContract ? ['required', 'date_format:d-m-Y', 'after_or_equal:start_date'] : ['nullable'],
+            'salary'           => $hasContract ? ['required', 'numeric', 'min:0'] : ['nullable'],
+
             'resignation_date' => ['nullable', 'date', 'after_or_equal:birthday'],
             'employment_status_id' => ['required', 'exists:employment_statuses,id'],
             'notes' => ['nullable', 'string', 'max:1000'],
-            'avatar' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp', 'max:5120'], // 5MB
+            'avatar' => ['required', 'url'],
+            'albums' => ['nullable', 'array'],
+            'albums.*' => ['url'],
         ];
     }
 
@@ -72,5 +84,13 @@ class EmployeeRequest extends FormRequest
             'notes' => 'Ghi chú',
             'avatar' => 'Ảnh đại diện',
         ];
+    }
+
+    public function passedValidation()
+    {
+        $this->validateMultipleMediaFields([
+            'avatar' => [$this->input('avatar', [])],
+            'albums' => $this->input('albums', []),
+        ]);
     }
 }

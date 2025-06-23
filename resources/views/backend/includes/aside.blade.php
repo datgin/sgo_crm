@@ -1,39 +1,19 @@
 <div class="sidebar-header">
-    <div>
-        <img src="assets/images/logo-icon-2.png" class="logo-icon" alt="logo icon" />
-    </div>
-    <div>
-        <h4 class="logo-text">Fobia</h4>
-    </div>
+    <img src="{{ fileExists($setting->logo) }}" class="logo-icon" alt="logo icon" />
 </div>
 <!--navigation-->
 @php
-    $menu = json_decode(file_get_contents(resource_path('views/backend/data/menu.json')), true);
+    $menus = json_decode(file_get_contents(resource_path('views/backend/data/menu.json')), true);
     $currentUrl = request()->path(); // VD: 'employees' (không có /)
 @endphp
 
 <ul class="metismenu" id="menu">
-    @foreach ($menu as $item)
+    @foreach ($menus as $item)
         @php
-            // Kiểm tra nếu là cha có children, và có item con trùng url hiện tại => mở ra
-            $hasActiveChild = false;
-            if (isset($item['children'])) {
-                foreach ($item['children'] as &$child) {
-                    $childUrl = ltrim($child['url'], '/');
-                    if ($currentUrl === $childUrl) {
-                        $child['active'] = true;
-                        $hasActiveChild = true;
-                    } else {
-                        $child['active'] = false;
-                    }
-                }
-
-                unset($child);
-            }
-            $isActive = $hasActiveChild || ltrim($item['url'], '/') === $currentUrl;
+            $open = isMenuActive($item, $currentUrl) ? 'mm-active' : '';
+            logger($open);
         @endphp
-
-        <li class="{{ $isActive ? 'mm-active' : '' }}">
+        <li class="{{ $open }}">
             <a href="{{ $item['url'] }}" class="{{ isset($item['children']) ? 'has-arrow' : '' }}">
                 <div class="parent-icon">
                     <i class="{{ $item['icon'] }}"></i>
@@ -44,9 +24,9 @@
             @if (isset($item['children']))
                 <ul>
                     @foreach ($item['children'] as $child)
-                        <li class="{{ $child['active'] ? 'active' : '' }}">
+                        <li class="{{ isChildActive($child, $currentUrl) ? 'mm-active' : '' }}">
                             <a href="{{ $child['url'] }}">
-                                {{ $child['title'] }}
+                                <i class="far fa-dot-circle me-2"></i> {{ $child['title'] }}
                             </a>
                         </li>
                     @endforeach
@@ -55,4 +35,5 @@
         </li>
     @endforeach
 </ul>
+
 <!--end navigation-->
