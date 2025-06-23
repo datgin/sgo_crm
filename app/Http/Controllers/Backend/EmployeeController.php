@@ -67,7 +67,7 @@ class EmployeeController extends Controller
             $employeeId = $request->input('id', $id);
 
             $employee = Employee::with([
-                'contract.contractType',
+                'latestContract.contractType',
                 'department',
                 'position',
                 'employmentStatus',
@@ -159,6 +159,7 @@ class EmployeeController extends Controller
 
     public function store(EmployeeRequest $request)
     {
+        
         $this->authorize('create', Employee::class);
 
         return transaction(function () use ($request) {
