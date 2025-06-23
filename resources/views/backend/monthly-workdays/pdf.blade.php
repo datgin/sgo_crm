@@ -95,7 +95,7 @@
     </table>
 
 
-    <table>
+    <table style="margin-top: 20px">
         <thead>
             <tr>
 
