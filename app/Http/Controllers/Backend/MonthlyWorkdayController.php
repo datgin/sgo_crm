@@ -202,7 +202,7 @@ class MonthlyWorkdayController extends Controller
         $month = $monthlyWorkday->month;
         $fileName = "{$nameSlug}_{$phone}.pdf";
 
-        $pdf = Pdf::loadView('backend.monthlyWorkdays.pdf', compact('employee', 'monthlyWorkday', 'month', 'sum_work', 'salaryRangesForMonth'))
+        $pdf = Pdf::loadView('backend.monthly-workdays.pdf', compact('employee', 'monthlyWorkday', 'month', 'sum_work', 'salaryRangesForMonth'))
             ->setPaper('a4', 'landscape');
         $folder = "payrolls/{$month}";
         Storage::put("public/{$folder}/{$fileName}", $pdf->output());
@@ -245,7 +245,7 @@ class MonthlyWorkdayController extends Controller
 
             $actualWorkingDays = min($workingDays, $remainingDays);
             if ($actualWorkingDays <= 0) {
-                continue; 
+                continue;
             }
 
             $results[] = [
