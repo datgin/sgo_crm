@@ -15,8 +15,8 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('employee_id');
             $table->string('month'); // định dạng: YYYY-MM
-            $table->integer('workdays'); // số công
-            $table->decimal('salary', 15, 0); // tổng lương
+            $table->integer('workdays')->nullable(); // số công
+            $table->decimal('salary', 15, 0)->nullable();
             $table->timestamps();
 
             $table->unique(['employee_id', 'month']);
