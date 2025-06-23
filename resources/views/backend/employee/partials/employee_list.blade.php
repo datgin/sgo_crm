@@ -6,14 +6,15 @@
             <div class="employee-title">{{ $employee->position->name }}</div>
             <div class="employee-department">{{ $employee->department->name }}</div>
 
+          
             @php
-                $status = $employee->employmentStatus->name;
-                $isWorking = $status == 'Đang làm việc';
-            @endphp
+            $status = $employee->status == 1 ? 'Đang làm việc' : 'Nghỉ việc';
+            // $isWorking = $status == 'Đang làm việc';
+        @endphp
 
-            <span class="badge {{ $isWorking ? 'text-success' : 'text-danger' }}">
-                <i class="fas fa-circle"></i> {{ $status }}
-            </span>
+        <span class="badge {{ $employee->status == 1 ? 'text-success' : 'text-danger' }}">
+            <i class="fas fa-circle"></i> {{ $status }}
+        </span>
 
             <div class="mt-2"><a href="{{ route('employees.view', ['id' => $employee->id]) }}"
                     class="details-link">Xem thông tin chi tiết </a></div>
