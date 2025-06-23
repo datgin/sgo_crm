@@ -55,6 +55,9 @@ class EmployeeRequest extends FormRequest
             'avatar' => ['required', 'url'],
             'albums' => ['nullable', 'array'],
             'albums.*' => ['url'],
+
+            'permissions' => 'required|array',
+            'permissions.*' => 'string|exists:permissions,name',
         ];
     }
 
@@ -83,6 +86,7 @@ class EmployeeRequest extends FormRequest
             'employment_status_id' => 'Tình trạng làm việc',
             'notes' => 'Ghi chú',
             'avatar' => 'Ảnh đại diện',
+            'permissions' => 'Quyền'
         ];
     }
 

@@ -38,6 +38,8 @@ Route::middleware('admin.auth')->group(function () {
         Route::put('save/{id}', 'update');
         Route::get('/view/{id}', 'view')->name('view');
         Route::get('/information', 'information')->name('information');
+        Route::get('permissions', 'showPermissionForm');
+        Route::post('permissions', 'assignPermissions');
     });
 
     Route::group([

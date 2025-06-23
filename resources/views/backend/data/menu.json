@@ -18,7 +18,7 @@
                 "url": "/employees/information"
             },
             {
-                "title": "Sinh nhật",
+                "title": "Lịch sinh nhật",
                 "url": "/birthdays"
             }
         ],
@@ -38,14 +38,9 @@
                 "url": "/contactTypes"
             },
             {
-                "title": "Hạng mục",
+                "title": "Danh mục hệ thống",
                 "url": "/categorys"
             }
         ]
-    },
-    {
-        "title": "Quyền hạn",
-        "icon": "fas fa-user-shield",
-        "url": "/permissions"
     }
 ]
