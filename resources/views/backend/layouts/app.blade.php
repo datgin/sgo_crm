@@ -65,7 +65,7 @@
     <div id="loadingOverlay">
         <div id="loading"></div>
     </div>
-
+    {{-- @include('backend.checkinout.check') --}}
     @include('backend.includes.script')
 
     @include('backend.includes.toastr')
