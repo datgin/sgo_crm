@@ -46,6 +46,7 @@ class MonthlyWorkdayController extends Controller
 
     public function updateWorkdays(Request $request, $id)
     {
+        // dd($request->toArray());
         try {
             $record = MonthlyWorkday::findOrFail($id);
             $record->workdays = (int) $request->input('workdays');
@@ -74,8 +75,8 @@ class MonthlyWorkdayController extends Controller
                 ]);
 
 
-            if ($record->employee && $record->employee->contract()->exists()) {
-                $contracts = $record->employee->contract()
+            if ($record->employee && $record->employee->contracts()->exists()) {
+                $contracts = $record->employee->contracts()
                     ->orderBy('start_date', 'asc')
                     ->get();
 
