@@ -5,9 +5,12 @@ namespace App\Http\Controllers\Backend;
 use App\Http\Controllers\Controller;
 use App\Models\Employee;
 use App\Models\MonthlyWorkday;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class MonthlyWorkdayController extends Controller
 {
@@ -35,6 +38,10 @@ class MonthlyWorkdayController extends Controller
                     'workdays' => '<input type="number" class="form-control form-control-sm workday-input"
                          data-id="' . $record->id . '" value="' . ($record->workdays ?? 0) . '" min="0" max="31">',
                     'salary' => number_format($record->salary ?? 0) . ' VNĐ',
+                    'file' => $record->file
+                    ? '<a href="' . asset($record->file) . '" target="_blank">Xem file</a>'
+                    : 'Chưa có'
+
                 ];
             });
 
@@ -46,10 +53,15 @@ class MonthlyWorkdayController extends Controller
 
     public function updateWorkdays(Request $request, $id)
     {
-        // dd($request->toArray());
+
+
         try {
             $record = MonthlyWorkday::findOrFail($id);
+            $employee_id = $record->employee_id;
+            $employee = Employee::find($employee_id);
             $record->workdays = (int) $request->input('workdays');
+            $salaryRangesForMonth = $this->getContractSalaryRangesForMonth($employee, $record->month, $record->workdays);
+
 
             $start = Carbon::parse($record->month . '-01')->startOfMonth();
             $end = $start->copy()->endOfMonth();
@@ -107,7 +119,8 @@ class MonthlyWorkdayController extends Controller
             } else {
                 $record->salary = 0;
             }
-
+            $employee = Employee::find($employee_id);
+            $record['file'] = $this->savePdf($employee, $record, $sum, $salaryRangesForMonth);
             $record->save();
 
             return response()->json([
@@ -180,6 +193,79 @@ class MonthlyWorkdayController extends Controller
 
         Log::info("Tạo $created bản ghi và xóa $deleted bản ghi MonthlyWorkday cho tháng $month");
     }
+
+    public function savePdf(Employee $employee, MonthlyWorkday $monthlyWorkday, $sum_work, $salaryRangesForMonth)
+    {
+
+        $nameSlug = Str::slug($employee->full_name);
+        $phone = preg_replace('/\D/', '', $employee->phone);
+        $month = $monthlyWorkday->month;
+        $fileName = "{$nameSlug}_{$phone}.pdf";
+
+        $pdf = Pdf::loadView('backend.monthlyWorkdays.pdf', compact('employee', 'monthlyWorkday', 'month', 'sum_work', 'salaryRangesForMonth'))
+            ->setPaper('a4', 'landscape');
+        $folder = "payrolls/{$month}";
+        Storage::put("public/{$folder}/{$fileName}", $pdf->output());
+
+        return asset("storage/{$folder}/{$fileName}");
+
+    }
+
+
+    function getContractSalaryRangesForMonth(Employee $employee, $month, $workdays)
+    {
+        $contracts = $employee->contracts()->orderBy('start_date')->get();
+
+        $startOfMonth = Carbon::parse($month)->startOfMonth();
+        $endOfMonth = Carbon::parse($month)->endOfMonth();
+
+        $results = [];
+        $remainingDays = $workdays;
+
+        foreach ($contracts as $contract) {
+            $contractStart = Carbon::parse($contract->start_date);
+            $contractEnd = Carbon::parse($contract->end_date);
+
+            if ($contractEnd < $startOfMonth || $contractStart > $endOfMonth) {
+                continue;
+            }
+
+            $from = $contractStart->greaterThan($startOfMonth) ? $contractStart : $startOfMonth;
+            $to = $contractEnd->lessThan($endOfMonth) ? $contractEnd : $endOfMonth;
+
+            $workingDays = 0;
+            $current = $from->copy();
+            while ($current->lte($to)) {
+                if ($current->dayOfWeek !== Carbon::SUNDAY) {
+                    $workingDays++;
+                }
+                $current->addDay();
+            }
+
+
+            $actualWorkingDays = min($workingDays, $remainingDays);
+            if ($actualWorkingDays <= 0) {
+                continue; 
+            }
+
+            $results[] = [
+                'contract_code' => $contract->code,
+                'salary' => $contract->salary,
+                'from' => $from->toDateString(),
+                'to' => $to->toDateString(),
+                'working_days_in_month' => $actualWorkingDays,
+            ];
+
+            $remainingDays -= $actualWorkingDays;
+            if ($remainingDays <= 0) {
+                break; // đủ ngày công, không cần chia thêm
+            }
+        }
+
+        return $results;
+    }
+
+
 
 
 }
