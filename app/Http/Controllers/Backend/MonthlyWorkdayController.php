@@ -6,11 +6,12 @@ use App\Http\Controllers\Controller;
 use App\Models\Employee;
 use App\Models\MonthlyWorkday;
 use Barryvdh\DomPDF\Facade\Pdf;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Carbon\CarbonInterface;
 
 class MonthlyWorkdayController extends Controller
 {
@@ -39,8 +40,8 @@ class MonthlyWorkdayController extends Controller
                          data-id="' . $record->id . '" value="' . ($record->workdays ?? 0) . '" min="0" max="31">',
                     'salary' => number_format($record->salary ?? 0) . ' VNĐ',
                     'file' => $record->file
-                    ? '<a href="' . asset($record->file) . '" target="_blank">Xem file</a>'
-                    : 'Chưa có'
+                        ? '<a href="' . asset($record->file) . '" target="_blank">Xem file</a>'
+                        : 'Chưa có'
 
                 ];
             });
@@ -80,11 +81,11 @@ class MonthlyWorkdayController extends Controller
             $request->validate([
                 'workdays' => 'required|numeric|min:0|max:' . $sum
             ], [
-                    'workdays.required' => 'Vui lòng nhập số ngày công.',
-                    'workdays.numeric' => 'Số ngày công phải là một số.',
-                    'workdays.min' => 'Số ngày công phải lớn hơn hoặc bằng 0.',
-                    'workdays.max' => 'Số ngày công không được lớn hơn ' . $sum . '.',
-                ]);
+                'workdays.required' => 'Vui lòng nhập số ngày công.',
+                'workdays.numeric' => 'Số ngày công phải là một số.',
+                'workdays.min' => 'Số ngày công phải lớn hơn hoặc bằng 0.',
+                'workdays.max' => 'Số ngày công không được lớn hơn ' . $sum . '.',
+            ]);
 
 
             if ($record->employee && $record->employee->contracts()->exists()) {
@@ -156,9 +157,9 @@ class MonthlyWorkdayController extends Controller
                 $q->where(function ($contractQ) use ($startOfMonth, $endOfMonth) {
                     $contractQ->where('start_date', '<=', $endOfMonth)
                         ->where(function ($dateQ) use ($startOfMonth) {
-                                $dateQ->where('end_date', '>=', $startOfMonth)
-                                    ->orWhereNull('end_date');
-                            });
+                            $dateQ->where('end_date', '>=', $startOfMonth)
+                                ->orWhereNull('end_date');
+                        });
                 });
             })
             ->get();
@@ -208,11 +209,10 @@ class MonthlyWorkdayController extends Controller
         Storage::put("public/{$folder}/{$fileName}", $pdf->output());
 
         return asset("storage/{$folder}/{$fileName}");
-
     }
 
 
-    function getContractSalaryRangesForMonth(Employee $employee, $month, $workdays)
+    public function getContractSalaryRangesForMonth(Employee $employee, $month, $workdays)
     {
         $contracts = $employee->contracts()->orderBy('start_date')->get();
 
@@ -236,7 +236,7 @@ class MonthlyWorkdayController extends Controller
             $workingDays = 0;
             $current = $from->copy();
             while ($current->lte($to)) {
-                if ($current->dayOfWeek !== Carbon::SUNDAY) {
+                if ($current->dayOfWeek !== CarbonInterface::SUNDAY) {
                     $workingDays++;
                 }
                 $current->addDay();
@@ -264,8 +264,4 @@ class MonthlyWorkdayController extends Controller
 
         return $results;
     }
-
-
-
-
 }
