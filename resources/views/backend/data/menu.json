@@ -11,19 +11,33 @@
         "children": [
             {
                 "title": "Quản lý nhân sự",
-                "url": "/employees"
+                "url": "/employees",
+                "is_admin" : 1
             },
             {
                 "title": "Thông tin nhân sự",
-                "url": "/employees/information"
+                "url": "/employees/information",
+                "is_admin" : 1
             },
             {
                 "title": "Lịch sinh nhật",
-                "url": "/birthdays"
+                "url": "/birthdays",
+                "is_admin" : 1
             },
             {
                 "title": "Quản lý bảng lương",
-                "url": "/monthly-workdays"
+                "url": "/monthly-workdays",
+                "is_admin" : 1
+            },
+            {
+                "title": "Quản lý hợp đồng",
+                "url": "/contracts",
+                "is_admin" : null
+            },
+            {
+                "title": "Bảng lương",
+                "url": "employee-monthly-workdays",
+                "is_admin" : 0
             }
         ],
         "active": ["/employees/save"]
@@ -35,15 +49,18 @@
         "children": [
             {
                 "title": "Cấu hình chung",
-                "url": "/settings"
+                "url": "/settings",
+                "is_admin" : 1
             },
             {
                 "title": "Loại hợp đồng",
-                "url": "/contactTypes"
+                "url": "/contactTypes",
+                "is_admin" : 1
             },
             {
                 "title": "Danh mục hệ thống",
-                "url": "/categorys"
+                "url": "/categorys",
+                "is_admin" : 1
             }
         ]
     }

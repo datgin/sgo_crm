@@ -24,14 +24,22 @@
             @if (isset($item['children']))
                 <ul>
                     @foreach ($item['children'] as $child)
-                        <li class="{{ isChildActive($child, $currentUrl) ? 'mm-active' : '' }}">
-                            <a href="{{ $child['url'] }}">
-                                <i class="far fa-dot-circle me-2"></i> {{ $child['title'] }}
-                            </a>
-                        </li>
+                        @php
+                            $isAdmin = auth('admin')->user()->isAdmin();
+                            $childIsAdmin = $child['is_admin'] ?? null;
+                        @endphp
+
+                        @if ($childIsAdmin === null || $childIsAdmin === $isAdmin)
+                            <li class="{{ isChildActive($child, $currentUrl) ? 'mm-active' : '' }}">
+                                <a href="{{ $child['url'] }}">
+                                    <i class="far fa-dot-circle me-2"></i> {{ $child['title'] }}
+                                </a>
+                            </li>
+                        @endif
                     @endforeach
                 </ul>
             @endif
+
         </li>
     @endforeach
 </ul>
