@@ -4,9 +4,11 @@ use App\Http\Controllers\Backend\AuthController;
 use App\Http\Controllers\Backend\BirthDayController;
 use App\Http\Controllers\Backend\BulkActionController;
 use App\Http\Controllers\Backend\CategoryController;
+use App\Http\Controllers\Backend\ContractController;
 use App\Http\Controllers\Backend\ContractTypeController;
 use App\Http\Controllers\Backend\DashboardController;
 use App\Http\Controllers\Backend\EmployeeController;
+use App\Http\Controllers\Backend\EmployeeMonthlyWorkdayController;
 use App\Http\Controllers\Backend\MediaItemController;
 
 use App\Http\Controllers\Backend\MonthlyWorkdayController;
@@ -90,6 +92,16 @@ Route::middleware('admin.auth')->group(function () {
         Route::post('{id}/update-workdays', [MonthlyWorkdayController::class, 'updateWorkdays']);
 
 
+    });
+
+    Route::group(['prefix' => 'employee-monthly-workdays', 'controller' => EmployeeMonthlyWorkdayController::class, 'as' => 'employeeMonthlyWorkdays.'], function () {
+        Route::get('/', 'index')->name('index');
+        Route::post('{id}/update-workdays', [EmployeeMonthlyWorkdayController::class, 'updateWorkdays']);
+    });
+
+    Route::group(['prefix' => 'contracts', 'controller' => ContractController::class, 'as' => 'contracts.'], function () {
+        Route::get('/', 'index')->name('index');
+        Route::get('{id}/show', 'show')->name('show');
     });
 
 
