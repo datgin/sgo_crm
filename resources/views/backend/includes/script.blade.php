@@ -29,6 +29,14 @@
 <script src="{{ asset('global/js/validate.js') }}"></script>
 
 <script>
+    window.Laravel = {
+        employeeId: {{ auth('admin')->user()->id }}
+    };
+</script>
+
+@vite('resources/js/app.js')
+
+<script>
     $.ajaxSetup({
         headers: {
             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')

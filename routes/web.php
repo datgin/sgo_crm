@@ -12,10 +12,12 @@ use App\Http\Controllers\Backend\EmployeeMonthlyWorkdayController;
 use App\Http\Controllers\Backend\MediaItemController;
 
 use App\Http\Controllers\Backend\MonthlyWorkdayController;
+use App\Http\Controllers\Backend\NotificationController;
 use App\Http\Controllers\Backend\PayrollController;
 use App\Http\Controllers\Backend\PermissionController;
 use App\Http\Controllers\Backend\SettingController;
-
+use App\Models\Employee;
+use App\Notifications\UserNotification;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -90,9 +92,8 @@ Route::middleware('admin.auth')->group(function () {
     Route::group(['prefix' => 'monthly-workdays', 'controller' => MonthlyWorkdayController::class, 'as' => 'monthlyWorkdays.'], function () {
         Route::get('/', 'index')->name('index');
         Route::post('{id}/update-workdays', [MonthlyWorkdayController::class, 'updateWorkdays']);
-
-
     });
+
 
     Route::group(['prefix' => 'employee-monthly-workdays', 'controller' => EmployeeMonthlyWorkdayController::class, 'as' => 'employeeMonthlyWorkdays.'], function () {
         Route::get('/', 'index')->name('index');
@@ -105,12 +106,15 @@ Route::middleware('admin.auth')->group(function () {
     });
 
 
-
     Route::group(['prefix' => 'settings', 'controller' => SettingController::class], function () {
         Route::get('/', 'index');
         Route::post('/', 'save');
     });
 
+    Route::group(['prefix' => 'notifications', 'controller' => NotificationController::class, 'as' => 'notifications'], function () {
+        Route::get('/', 'index');
+        Route::post('send', 'send');
+    });
 });
 
 
