@@ -180,7 +180,7 @@ class EmployeeController extends Controller
                 'password' => $credentials['password'],
             ]);
 
-            $user->syncPermissions($credentials['permissions']);
+            $user->syncPermissions($credentials['permissions'] ?? []);
 
             // Thêm hợp đồng nếu có
             $this->storeOrUpdateContract($employee, $credentials);
@@ -245,7 +245,7 @@ class EmployeeController extends Controller
                 'phone' => $employee->phone,
             ] + ($request->filled('password') ? ['password' => bcrypt($request->input('password'))] : []));
 
-            $user->syncPermissions($credentials['permissions']);
+            $user->syncPermissions($credentials['permissions'] ?? []);
 
             return successResponse("Lưu thay đổi thành công", ['redirect' => '/employees']);
         });

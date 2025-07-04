@@ -56,7 +56,7 @@ class EmployeeRequest extends FormRequest
             'albums' => ['nullable', 'array'],
             'albums.*' => ['url'],
 
-            'permissions' => 'required|array',
+            'permissions' => 'nullable|array',
             'permissions.*' => 'string|exists:permissions,name',
         ];
     }
