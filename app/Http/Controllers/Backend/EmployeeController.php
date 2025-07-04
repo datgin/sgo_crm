@@ -79,7 +79,7 @@ class EmployeeController extends Controller
                     'avatar'             => $employee->avatar,
                     'full_name'          => $employee->full_name,
                     'gender_text'        => $employee->gender_text,
-                    'age'                => $employee->birthday->age . ' tuổi',
+                    'age'                => $employee->birthday ?  $employee->birthday->age . ' tuổi' : "<span class='text-muted'>Chưa xác định</span>",
                     'department'         => $employee->department->name,
                     'position'           => $employee->position->name,
                     'birthday'           => $employee->birthday ? $employee->birthday->format('d/m/Y') : "<span class='text-muted'>Chưa xác định</span>",
@@ -159,7 +159,7 @@ class EmployeeController extends Controller
 
     public function store(EmployeeRequest $request)
     {
-        
+
         $this->authorize('create', Employee::class);
 
         return transaction(function () use ($request) {

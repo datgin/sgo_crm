@@ -9,7 +9,9 @@
                 <div class="text-center border-bottom pb-3 mb-4">
                     <h3 class="fw-bold mb-2">THÔNG TIN CHI TIẾT NHÂN SỰ</h3>
                     <h5 class="mb-1 text-muted text-start">{{ $setting->company_name }}</h5>
-                    <h4 class="mb-0 small text-muted text-start">Địa chỉ: {{ $setting->address }}</h4>
+                    @if ($setting->address)
+                        <h4 class="mb-0 small text-muted text-start">Địa chỉ: {{ $setting->address }}</h4>
+                    @endif
                 </div>
 
                 <div class="row mb-4">
@@ -33,7 +35,7 @@
                             <h5 class="fw-bold mb-1" id="employeeFullName">{{ $employee->full_name }}</h5>
                             <p class="text-muted  mb-1">Giới tính: <span
                                     id="employeeGender">{{ $employee->gender_text }}</span></p>
-                            <p class=" mb-1">Tuổi: <span id="employeeAge">{{ $employee->birthday->age }} tuổi</span></p>
+                            <p class=" mb-1">Tuổi: <span id="employeeAge">{{  $employee->birthday ? $employee->birthday->age : 'chưa cập nhật' }} tuổi</span></p>
                             <p class=" mb-1">Bộ phận: <span
                                     id="employeeDepartment">{{ $employee->department->name }}</span></p>
                             <p class=" mb-0">Chức vụ: <span id="employeePosition">{{ $employee->position->name }}</span>
@@ -47,9 +49,13 @@
                             <table class="table table-sm table-borderless info-table">
                                 <tbody>
                                     <tr>
+                                        <td class="label-col">Mã NV:</td>
+                                        <td id="employeeCode">{{ $employee->code }}</td>
+                                    </tr>
+                                    <tr>
                                         <td class="label-col">Ngày sinh:</td>
                                         <td id="employeeBirthday">
-                                            {{ $employee->birthday->format('d/m/Y') }}</td>
+                                            {{ $employee->birthday ? $employee->birthday->format('d/m/Y') : 'chưa cập nhật' }}</td>
                                     </tr>
                                     <tr>
                                         <td class="label-col">SĐT:</td>
@@ -58,10 +64,6 @@
                                     <tr>
                                         <td class="label-col">Số CCCD:</td>
                                         <td id="employeeCCCD">{{ $employee->cccd }}</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="label-col">Mã NV:</td>
-                                        <td id="employeeCode">{{ $employee->code }}</td>
                                     </tr>
                                     <tr>
                                         <td class="label-col">Địa chỉ hiện tại:</td>
@@ -101,7 +103,7 @@
                                         <td class="label-col">Trạng thái:</td>
                                         <td id="employeeStatus"
                                             class="{{ $employee->status != '1' ? 'text-danger' : 'text-success' }}">
-                                            {{  $employee->status == 1 ? 'Đang làm việc' : 'Đã nghỉ' }}
+                                            {{ $employee->status == 1 ? 'Đang làm việc' : 'Đã nghỉ' }}
                                         </td>
                                     </tr>
                                     <tr>
