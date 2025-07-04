@@ -53,11 +53,20 @@
         }
 
         .employee-photo {
-            width: 80px;
-            height: 80px;
-            border-radius: 8px;
+            width: 100%;
+            /* full card width */
+            aspect-ratio: 3 / 4;
+            /* giữ đúng tỷ lệ 3x4 */
             object-fit: cover;
-            margin-bottom: 15px;
+            /* cắt ảnh không méo */
+            object-position: center;
+            /* căn giữa */
+            border-radius: 4px;
+            /* bo góc nhẹ */
+            display: block;
+            /* loại bỏ khoảng trắng dưới ảnh */
+
+            margin-bottom: 12px;
         }
 
         .employee-name {
@@ -115,6 +124,53 @@
             text-align: center;
             margin-bottom: 30px;
             color: #333;
+        }
+
+        .employee-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 16px;
+            align-items: start;
+        }
+
+        .employee-card {
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 6px rgba(0, 0, 0, 0.08);
+            padding: 12px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .employee-photo {
+            width: 100%;
+            aspect-ratio: 3 / 4;
+            object-fit: cover;
+            border-radius: 4px;
+            background: #f9f9f9;
+        }
+
+        .employee-name {
+            font-weight: 600;
+            margin-top: 8px;
+        }
+
+        .employee-title,
+        .employee-department {
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .details-link {
+            color: #007bff;
+            font-size: 0.9rem;
+            text-decoration: none;
+        }
+
+        .details-link:hover {
+            text-decoration: underline;
         }
     </style>
 @endpush
