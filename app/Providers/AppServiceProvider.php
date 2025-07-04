@@ -29,12 +29,17 @@ class AppServiceProvider extends ServiceProvider
             $shared = true;
 
             $user = auth('admin')->user(); // vì bạn dùng guard admin
-            /**
-             * @var User $user /
-             */
-            $notifications = $user->notifications()->take(10)->get();
-            // dd($notifications);
-            $unreadCount = $user->unreadNotifications()->count();
+
+            $notifications = collect();
+            $unreadCount = 0;
+
+            if ($user) {
+                /**
+                 * @var User $user
+                 */
+                $notifications = $user->notifications()->take(10)->get();
+                $unreadCount = $user->unreadNotifications()->count();
+            }
 
             $setting = Setting::query()->firstOrCreate();
 
